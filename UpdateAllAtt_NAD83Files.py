@@ -1,6 +1,7 @@
-import arcpy
 import os
 import datetime
+
+import arcpy
 
 masterlist = 'J:\Workspace\MasterLists\CSV\MasterListESA_April2015_20151015_20151124.csv'
 infolder = 'J:\Workspace\ESA_Species\Range\NAD83'  # folder of GDB
@@ -64,6 +65,7 @@ def CreateGDB(OutFolder, OutName, outpath):
 
 
 ## may be able to call dissolve field in update and so that is does  not need to re-load the fc list
+# TODO update files so that character limits in the attribute table doesn't block data update
 def updateFilesloop(inGDB, final_fields, speinfodict, DissolveFiles):
     group_gdb = inGDB
     arcpy.env.workspace = group_gdb
@@ -143,9 +145,12 @@ def updateFilesloop(inGDB, final_fields, speinfodict, DissolveFiles):
                             if current == value:
                                 continue
                             else:
-                                row[0] = value
-                                cursor.updateRow(row)
-                                output_update(fc, field)
+                                try:
+                                    row[0] = value
+                                    cursor.updateRow(row)
+                                    output_update(fc, field)
+                                except:
+                                    continue
         for field in fclist_field:
             if field not in final_fields:
                 arcpy.DeleteField_management(fc, field)
