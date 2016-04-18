@@ -45,12 +45,12 @@ def fcs_in_workspace(workspace):
             yield fc
 
 
-def askuser(col, q, list):
+def askuser(col, q, listQtype):
     if q == 'Q1':
         user_input = raw_input('What is the column index for the EntityID (base 0): ')
         return user_input
     else:
-        print list
+        print listQtype
         user_input = raw_input('What is the column index for the {0}(base 0): '.format(col))
         return user_input
 
@@ -70,7 +70,6 @@ def updateFilesloop(inGDB, final_fields, speinfodict, DissolveFiles):
     group_gdb = inGDB
     arcpy.env.workspace = group_gdb
     fclist = arcpy.ListFeatureClasses()
-    entlist_fc = []
     for fc in fclist:
         print fc
         result = arcpy.GetCount_management(fc)
@@ -114,7 +113,7 @@ def updateFilesloop(inGDB, final_fields, speinfodict, DissolveFiles):
                             current = row[0]
                             fcnamelist = fc.split("_")
                             try:
-                                fcname = fcnamelist[0] +"_" +fcnamelist[1] +"_" +fcnamelist[2] +"_" +fcnamelist[3]
+                                fcname = fcnamelist[0] + "_" + fcnamelist[1] + "_" + fcnamelist[2] + "_" + fcnamelist[3]
                             except:
                                 fcname = fc
                             if current == fcname:
@@ -145,6 +144,7 @@ def updateFilesloop(inGDB, final_fields, speinfodict, DissolveFiles):
                             if current == value:
                                 continue
                             else:
+                                # noinspection PyBroadException
                                 try:
                                     row[0] = value
                                     cursor.updateRow(row)
@@ -159,7 +159,7 @@ def updateFilesloop(inGDB, final_fields, speinfodict, DissolveFiles):
     return DissolveFiles
 
 
-def dissolveLoop(inGDB, final_fields):
+def dissolveloop(inGDB, final_fields):
     group_gdb = inGDB
     arcpy.env.workspace = group_gdb
     fclist = arcpy.ListFeatureClasses()
@@ -187,8 +187,8 @@ def LoadSpeciesinfo_frommaster(ColIndexDict, reqindex, masterlist):
     listKeys = ColIndexDict.keys()
     listKeys.sort()
     reqlistkeys = sorted(reqindex.keys())
-    Q1 = False
-    Q2 = False
+    q1 = False
+    q2 = False
     for val in reqlistkeys:
         if val in listKeys:
             continue
@@ -196,9 +196,9 @@ def LoadSpeciesinfo_frommaster(ColIndexDict, reqindex, masterlist):
             question = reqindex[val]
             vars()[question] = True
             vars()[val] = askuser(val, question, listKeys)
-            if Q1:
+            if q1:
                 ColIndexDict['entid'] = vars()[val]
-            if Q2:
+            if q2:
                 ColIndexDict['group'] = vars()[val]
 
     listKeys = ColIndexDict.keys()
@@ -217,9 +217,9 @@ def LoadSpeciesinfo_frommaster(ColIndexDict, reqindex, masterlist):
                 speciesinfo.append(vars()[v])
             speciesinfo_dict[entid] = speciesinfo
     inputFile.close()
-    alpha_group = sorted(grouplist)
+    alpha = sorted(grouplist)
     # print alpha_group
-    return listKeys, speciesinfo_dict, alpha_group
+    return listKeys, speciesinfo_dict, alpha
 
 
 listKeys, speciesinfo_dict, alpha_group = LoadSpeciesinfo_frommaster(ColIndexDict, reqindex, masterlist)
@@ -227,7 +227,7 @@ listKeys, speciesinfo_dict, alpha_group = LoadSpeciesinfo_frommaster(ColIndexDic
 print listKeys
 print speciesinfo_dict[speciestoQA]
 
-while updatefiles == False:
+while not updatefiles:
     user_inputupdated = raw_input('Please confirm that the species information is in the correct order: Yes or No: ')
     if user_inputupdated not in inputlist:
         print 'This is not a valid answer'
@@ -238,7 +238,7 @@ while updatefiles == False:
             inGDB = infolder
             DissolveFiles = updateFilesloop(inGDB, final_fields, speciesinfo_dict, DissolveFiles)
             if DissolveFiles:
-                dissolveLoop(inGDB, final_fields)
+                dissolveloop(inGDB, final_fields)
             DissolveFiles = False
 
         else:
@@ -250,7 +250,7 @@ while updatefiles == False:
                 inGDB = infolder + os.sep + str(group) + '.gdb'
                 DissolveFiles = updateFilesloop(inGDB, final_fields, speciesinfo_dict, DissolveFiles)
                 if DissolveFiles:
-                    dissolveLoop(inGDB, final_fields)
+                    dissolveloop(inGDB, final_fields)
                 DissolveFiles = False
 
                 endloop = datetime.datetime.now()

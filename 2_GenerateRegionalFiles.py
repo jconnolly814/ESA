@@ -3,6 +3,7 @@ import datetime
 
 import arcpy
 
+masterlist = 'J:\Workspace\MasterLists\CSV\MasterListESA_April2015_20151015_20151124.csv'
 masterlist = 'C:\Users\Admin\Documents\Jen\Workspace\MasterLists\CSV\MasterListESA_April2015_20151015_20151124.csv'
 
 PossAnswers = ['Yes', 'No']

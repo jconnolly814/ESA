@@ -3,7 +3,7 @@ import os
 
 import arcpy
 
-masterlist = 'C:\Users\Admin\Documents\Jen\Workspace\MasterLists\CSV\MasterListESA_April2015_20151015_20151124.csv'
+masterlist = 'J:\Workspace\MasterLists\CSV\MasterListESA_April2015_20151015_20151124.csv'
 regionsgdb_csv = r'C:\Users\Admin\Documents\Jen\Workspace\ESA_Species\BySpeciesGroup\ForCoOccur\Dict\regionsgdb.csv'
 inFishnets = 'C:\Users\Admin\Documents\Jen\Workspace\ESA_Species\BySpeciesGroup\ForCoOccur\Composites\GDB\Fishnets_NAD83.gdb'
 
