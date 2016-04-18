@@ -3,6 +3,7 @@ import datetime
 
 import arcpy
 
+
 ## if in and output locations change variables need to be updated
 PossAnswers = ['Yes', 'No']
 masterlist = 'J:\Workspace\MasterLists\CSV\MasterListESA_April2015_20151015_20151118.csv'
@@ -36,11 +37,12 @@ def CreateGDB(OutFolder, OutName, outpath):
     if not arcpy.Exists(outpath):
         arcpy.CreateFileGDB_management(OutFolder, OutName, "CURRENT")
 
-def CreateDirectory(OutFolderGDB):
 
+def CreateDirectory(OutFolderGDB):
     if not os.path.exists(OutFolderGDB):
         os.mkdir(OutFolderGDB)
         print "created directory {0}".format(OutFolderGDB)
+
 
 start_script = datetime.datetime.now()
 print "Script started at {0}".format(start_script)
@@ -62,12 +64,12 @@ for group in alpha_group:
     if group in skip:
         continue
     print "Current group is {0}".format(group)
-    gdb =str(group) + '.gdb'
-    #print gdb
+    gdb = str(group) + '.gdb'
+    # print gdb
     if not os.path.exists(outGDBFolder):
         CreateDirectory(outGDBFolder)
     outpath = str(outGDBFolder) + os.sep + str(group) + '.gdb'
-    #print outpath
+    # print outpath
     if not arcpy.Exists(outpath):
         CreateGDB(outGDBFolder, gdb, outpath)
 
@@ -81,7 +83,7 @@ for group in alpha_group:
         infile = group_gdb + os.sep + fc
         outfile = outGDBFolder + os.sep + str(group) + '.gdb' + os.sep + fc
         if not arcpy.Exists(outfile):
-            print "Generate SinglePart for {0} remaining files {1}  {2}".format(fc,total,group)
+            print "Generate SinglePart for {0} remaining files {1}  {2}".format(fc, total, group)
             total -= 1
             arcpy.MultipartToSinglepart_management(infile, outfile)
         else:
