@@ -4,6 +4,7 @@ import datetime
 import arcpy
 
 
+
 ## if in and output locations change variables need to be updated
 PossAnswers = ['Yes', 'No']
 masterlist = 'J:\Workspace\MasterLists\CSV\MasterListESA_April2015_20151015_20151118.csv'
