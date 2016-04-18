@@ -4,25 +4,27 @@ import os
 import arcpy
 
 masterlist = 'J:\Workspace\MasterLists\CSV\MasterListESA_April2015_20151015_20151124.csv'
-regionsgdb_csv = r'C:\Users\Admin\Documents\Jen\Workspace\ESA_Species\BySpeciesGroup\ForCoOccur\Dict\regionsgdb.csv'
-inFishnets = 'C:\Users\Admin\Documents\Jen\Workspace\ESA_Species\BySpeciesGroup\ForCoOccur\Composites\GDB\Fishnets_NAD83.gdb'
-
-infolder = 'C:\Users\Admin\Documents\Jen\Workspace\ESA_Species\BySpeciesGroup\ForCoOccur\CriticalHabitat'
-skiplist = []
+regionsgdb_csv = r'J:\Workspace\ESA_Species\ForCoOccur\Dict\regionsgdb_simplifed.csv'
+inFishnets = 'J:\Workspace\ESA_Species\ForCoOccur\Composites\GDB\Fishnets_NAD83.gdb'
+skiplist = []  # species groups that were already run
 
 PossAnswers = ['Yes', 'No']
 
-user_input = raw_input('Are you running range files? Yes or No ')
-if user_input not in PossAnswers:
-    print 'This is not a valid answer'
+QAanswer = True
 
-else:
-    if user_input == 'Yes':
-        infolder = 'J:\Workspace\ESA_Species\ForCoOccur\Range'
-        print 'Running range files output will be located at {0}'.format(infolder)
+while QAanswer:
+    user_input = raw_input('Are you running range files? Yes or No ')
+    if user_input not in PossAnswers:
+        print 'This is not a valid answer'
+
     else:
-        infolder = 'J:\Workspace\ESA_Species\ForCoOccur\CriticalHabitat'
-        print 'Running critical habitat files output will be located at {0}'.format(infolder)
+        QAanswer = False
+        if user_input == 'Yes':
+            infolder = 'J:\Workspace\ESA_Species\ForCoOccur\Range'
+            print 'Running range files output will be located at {0}'.format(infolder)
+        else:
+            infolder = 'J:\Workspace\ESA_Species\ForCoOccur\CriticalHabitat'
+            print 'Running critical habitat files output will be located at {0}'.format(infolder)
 
 gdblist = ["SingleNonLower48only.gdb", "SingleBoth.gdb"]
 

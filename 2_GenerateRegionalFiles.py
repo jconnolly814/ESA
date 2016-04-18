@@ -9,19 +9,23 @@ PossAnswers = ['Yes', 'No']
 masterlist = 'J:\Workspace\MasterLists\CSV\MasterListESA_April2015_20151015_20151118.csv'
 skip = []  ##species groups that were already run
 
-user_input = raw_input('Are you running range files? Yes or No ')
-if user_input not in PossAnswers:
-    print 'This is not a valid answer'
+QAanswer = True
 
-else:
-    if user_input == 'Yes':
-        infolder = 'J:\Workspace\ESA_Species\Range\NAD83'
-        outfolder = 'J:\Workspace\ESA_Species\ForCoOccur\Range'
-        print 'Running range files output will be located at {0}'.format(outfolder)
+while QAanswer:
+    user_input = raw_input('Are you running range files? Yes or No ')
+    if user_input not in PossAnswers:
+        print 'This is not a valid answer'
+
     else:
-        infolder = 'J:\Workspace\ESA_Species\CriticalHabitat\NAD_Final'
-        outfolder = 'J:\Workspace\ESA_Species\ForCoOccur\CriticalHabitat'
-        print 'Running critical habitat files output will be located at {0}'.format(outfolder)
+        QAanswer = False
+        if user_input == 'Yes':
+            infolder = 'J:\Workspace\ESA_Species\Range\NAD83'
+            outfolder = 'J:\Workspace\ESA_Species\ForCoOccur\Range'
+            print 'Running range files output will be located at {0}'.format(outfolder)
+        else:
+            infolder = 'J:\Workspace\ESA_Species\CriticalHabitat\NAD_Final'
+            outfolder = 'J:\Workspace\ESA_Species\ForCoOccur\CriticalHabitat'
+            print 'Running critical habitat files output will be located at {0}'.format(outfolder)
 
 skip = []
 
