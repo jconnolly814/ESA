@@ -4,7 +4,7 @@ import os
 import arcpy
 
 masterlist = 'J:\Workspace\MasterLists\CSV\MasterListESA_April2015_20151015_20151124.csv'
-regionsgdb_csv = r'J:\Workspace\ESA_Species\ForCoOccur\Dict\regionsgdb_simplifed.csv'
+regionsgdb_csv = r'J:\Workspace\ESA_Species\ForCoOccur\Dict\regionsgdb_simplifed.csv'  # TODO take table and load as a list in script so that there doesn't need to be a standalone document
 inFishnets = 'J:\Workspace\ESA_Species\ForCoOccur\Composites\GDB\Fishnets_NAD83.gdb'
 skiplist = []  # species groups that were already run
 
