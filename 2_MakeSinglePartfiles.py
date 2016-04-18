@@ -3,17 +3,25 @@ import datetime
 
 import arcpy
 
-Range = True
+## if in and output locations change variables need to be updated
+PossAnswers = ['Yes', 'No']
 masterlist = 'J:\Workspace\MasterLists\CSV\MasterListESA_April2015_20151015_20151118.csv'
+skip = []  ##species groups that were already run
 
-if Range:
-    infolder = 'J:\Workspace\ESA_Species\Range\NAD83'
-    outGDBFolder = "J:\Workspace\ESA_Species\Range\NAD83_SinglePart"
+user_input = raw_input('Are you running range files? Yes or No ')
+if user_input not in PossAnswers:
+    print 'This is not a valid answer'
+
 else:
-    infolder = 'J:\Workspace\ESA_Species\CriticalHabitat\NAD_Final'
-    outGDBFolder = "J:\Workspace\ESA_Species\CriticalHabitat\NAD83_SinglePart"
+    if user_input == 'Yes':
+        infolder = 'J:\Workspace\ESA_Species\Range\NAD83'
+        outGDBFolder = "J:\Workspace\ESA_Species\Range\NAD83_SinglePart"
+        print 'Running range files output will be located at {0}'.format(outGDBFolder)
+    else:
+        infolder = 'J:\Workspace\ESA_Species\CriticalHabitat\NAD_Final'
+        outGDBFolder = "J:\Workspace\ESA_Species\CriticalHabitat\NAD83_SinglePart"
+        print 'Running critical habitat files output will be located at {0}'.format(outGDBFolder)
 
-skip =[]
 
 def fcs_in_workspace(workspace):
     arcpy.env.workspace = workspace
