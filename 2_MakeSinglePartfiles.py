@@ -1,7 +1,7 @@
-import arcpy
 import os
 import datetime
-from arcpy import env
+
+import arcpy
 
 Range = True
 masterlist = 'J:\Workspace\MasterLists\CSV\MasterListESA_April2015_20151015_20151118.csv'
