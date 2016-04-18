@@ -71,6 +71,7 @@ inputFile.close()
 
 unq_grps = set(grouplist)
 alpha_group = sorted(unq_grps)
+print alpha_group
 
 for group in alpha_group:
     if group in skiplist:
