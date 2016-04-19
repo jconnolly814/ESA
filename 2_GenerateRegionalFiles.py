@@ -27,7 +27,7 @@ while QAanswer:
             outfolder = 'J:\Workspace\ESA_Species\ForCoOccur\CriticalHabitat'
             print 'Running critical habitat files output will be located at {0}'.format(outfolder)
 
-skip = []
+skip = ['Amphibians', 'Arachnids', 'Birds', 'Clams', 'Conifers and Cycads', 'Corals', 'Crustaceans', 'Ferns and Allies', 'Fishes']
 
 
 def fcs_in_workspace(workspace):

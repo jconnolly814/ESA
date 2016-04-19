@@ -13,7 +13,7 @@ PossAnswers = ['Yes', 'No']
 QAanswer = True
 
 while QAanswer:
-    user_input = raw_input('Are you running range files? Yes or No ')
+    user_input = raw_input('Are you running range files? Yes or No? ')
     if user_input not in PossAnswers:
         print 'This is not a valid answer'
 
@@ -144,5 +144,5 @@ print "species in HI {0}".format(HI)
 print "species in PLower48 {0}".format(Lower48)
 print "species in PR {0}".format(PR)
 print "species in VI {0}".format(VI)
-
+#TODO export the list of speices in each region to DF then export to CSV
 print "Script completed in: {0}".format(datetime.datetime.now() - start_script)
