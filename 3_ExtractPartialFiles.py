@@ -1,12 +1,53 @@
 import datetime
 import os
-
+import pandas as pd
 import arcpy
 
 masterlist = 'J:\Workspace\MasterLists\CSV\MasterListESA_April2015_20151015_20151124.csv'
-regionsgdb_csv = r'J:\Workspace\ESA_Species\ForCoOccur\Dict\regionsgdb_simplifed.csv'  # TODO take table and load as a list in script so that there doesn't need to be a standalone document
-inFishnets = 'J:\Workspace\ESA_Species\ForCoOccur\Composites\GDB\Fishnets_NAD83.gdb'
+regionsgdb_csv = r'J:\Workspace\ESA_Species\ForCoOccur\Dict\regionsgdb_simplifed.csv'
+# TODO take table and load as a list in script so that there doesn't need to be a standalone document
+
 skiplist = []  # species groups that were already run
+
+index_dict = {'EntityID': 0,
+              'AK': 5,
+              'AS': 6,
+              'CNMI': 7,
+              'GU': 8,
+              'HI': 9,
+              'Howland Baker Jarvis': 10,
+              'Johnston': 11,
+              'L48': 12,
+              'Laysan': 13,
+              'Mona': 14,
+              'Necker': 15,
+              'Nihoa': 16,
+              'NorthwesternHI': 17,
+              'PR': 18,
+              'Palmyra Kingman': 19,
+              'VI': 20,
+              'Wake': 21}
+
+GDB_Dict = {'AK': 'AK_Singlepart.gdb',
+            'AS': 'AS_Singlepart.gdb',
+            'CNMI': 'CNMI_Singlepart.gdb',
+            'GU': 'GU_Singlepart.gdb',
+            'HI': 'HI_Singlepart.gdb',
+            'Howland Baker Jarvis': 'Howland_Singlepart.gdb',
+            'Johnston': 'Johnston_Singlepart.gdb',
+            'L48': 'Lower48_Singlepart.gdb',
+            'Laysan': 'Laysan_Singlepart.gdb',
+            'Mona': 'Mona_Singlepart.gdb',
+            'Necker': 'Necker_Singlepart.gdb',
+            'Nihoa': 'Nihoa_Singlepart.gdb',
+            'NorthwesternHI': 'NorthwesternHI_Singlepart.gdb',
+            'PR': 'PR_Singlepart.gdb',
+            'Palmyra Kingman': 'Palmyra_Singlepart.gdb',
+            'VI': 'VI_Singlepart.gdb',
+            'Wake': 'Wake_Singlepart.gdb'}
+
+listKeys = sorted(index_dict.keys())
+print listKeys
 
 PossAnswers = ['Yes', 'No']
 
@@ -21,12 +62,14 @@ while QAanswer:
         QAanswer = False
         if user_input == 'Yes':
             infolder = 'J:\Workspace\ESA_Species\ForCoOccur\Range'
+            regionallocations = 'J:\Workspace\MasterOverlap\Panda\WGSRange_SpeciesRegions_all.xlsx'
             print 'Running range files output will be located at {0}'.format(infolder)
         else:
             infolder = 'J:\Workspace\ESA_Species\ForCoOccur\CriticalHabitat'
             print 'Running critical habitat files output will be located at {0}'.format(infolder)
+            regionallocations = 'J:\Workspace\MasterOverlap\Panda\WGS_CH_Range_SpeciesRegions_all.xlsx'
 
-gdblist = ["SingleNonLower48only.gdb", "SingleBoth.gdb"]
+gdblist = ["SingleNonLower48only.gdb", "SingleBoth.gdb", "Lower48Only.gdb"]
 
 
 def CreateDirectory(DBF_dir):
@@ -50,15 +93,39 @@ def fcs_in_workspace(workspace):
 
 start_script = datetime.datetime.now()
 print "Started: {0}".format(start_script)
+
+regionaldf = pd.read_excel(regionallocations, sheetname='Sheet1', header=0, skiprows=0,
+                           skip_footer=0, index_col=None,
+                           parse_cols=None, parse_dates=False, date_parser=None, na_values=None, thousands=None,
+                           convert_float=True, has_index_names=None, converters=None, engine=None)
+rowcount = regionaldf.count(axis=0, level=None, numeric_only=False)
+rowindex = rowcount.values[0]
+print rowindex
+
+listheader = regionaldf.columns.values.tolist()
+colcount = len(listheader)
+print colcount
+outDF = pd.DataFrame(columns=listheader)
+
+col = 0
+row = 0
+
+outdict = {}
+while row <= (rowindex - 1):
+    currentlist = []
+    entidnext = index_dict['EntityID']
+    entid = str(regionaldf.iloc[row, entidnext])
+    for vol in listKeys:
+        colvalue = index_dict[vol]
+        # print 'Current index is {0} , {1}'.format(row,colvalue)
+        value = regionaldf.iloc[row, colvalue]
+        currentlist.append(value)
+    # print currentlist
+    outdict[entid] = currentlist
+    row += 1
+
+# print outdict
 grouplist = []
-AK = []
-AS = []
-CNMI = []
-GU = []
-HI = []
-Lower48 = []
-PR = []
-VI = []
 with open(masterlist, 'rU') as inputFile:
     header = next(inputFile)
     for line in inputFile:
@@ -67,8 +134,6 @@ with open(masterlist, 'rU') as inputFile:
         group = line[1]
         grouplist.append(group)
 
-inputFile.close()
-
 unq_grps = set(grouplist)
 alpha_group = sorted(unq_grps)
 print alpha_group
@@ -76,73 +141,50 @@ print alpha_group
 for group in alpha_group:
     if group in skiplist:
         continue
-
     print "\nWorking on {0}".format(group)
 
-    for fish in fcs_in_workspace(inFishnets):
-        print "Working with {0}".format(fish)
-
-        arcpy.Delete_management("fish_lyr")
-        infish = inFishnets + os.sep + fish
-        arcpy.MakeFeatureLayer_management(infish, "fish_lyr")
-
+    for regions in listKeys:
+        if regions == 'EntityID':  # TODO remove this hard code
+            continue
+        region = regions
+        print "Working with {0}".format(regions)
         resultfolder = infolder + os.sep + group
-
         regionsDIR = resultfolder + os.sep + "Regions"
+        CreateDirectory(resultfolder)
         CreateDirectory(regionsDIR)
 
         NAD83DIR = regionsDIR + os.sep + 'NAD83'
         CreateDirectory(NAD83DIR)
+        gdb = GDB_Dict[regions]
+        outpathgdb = NAD83DIR + os.sep + gdb
 
-        region = fish.split("_")
-        region = str(region[0])
-        # print region
-        with open(regionsgdb_csv, 'rU') as inputFile2:
-            for line in inputFile2:
-                line = line.split(',')
-                fishnet = line[0]
-                if fishnet == fish:
-                    # print fishnet
-                    outgbdname = str(line[1])
-                    # print outgbdname
-                    list2 = str(line[2])
-                    list2 = list2.strip("\n")
-                else:
-                    continue
-        inputFile2.close()
-
-        regionGDB = outgbdname
-        outpathgdb = NAD83DIR + os.sep + regionGDB
-
-        if not arcpy.Exists(outpathgdb):
-            CreateGDB(NAD83DIR, regionGDB, outpathgdb)
 
         for value in gdblist:
+            if value == "SingleBoth.gdb" and regions == "Lower48":
+                outpathgdb = NAD83DIR + os.sep + 'PLower48_Singlepart.gdb'
+                region = 'PLower48'
+
+
             inGDB = resultfolder + os.sep + value
             for fc in fcs_in_workspace(inGDB):
-
-                arcpy.Delete_management("fc_lyr")
                 infc = inGDB + os.sep + fc
-                arcpy.MakeFeatureLayer_management(infc, "fc_lyr")
-                arcpy.SelectLayerByLocation_management("fc_lyr", 'intersect', "fish_lyr", "#", "NEW_SELECTION")
-                arcpy.Delete_management("sel_lyr")
-                arcpy.MakeFeatureLayer_management("fc_lyr", "sel_lyr")
-                count = int(arcpy.GetCount_management("sel_lyr").getOutput(0))
-                if count > 0:
+                entid = fc.split("_")
+                entid = str(entid[1])
+                regionindex = listKeys.index(regions)
+                speinfo = outdict[entid]
+                # print speinfo
+                regionval = str(speinfo[regionindex])
+                # print regionval
+                if regionval != 'nan':
                     outfc = outpathgdb + os.sep + region + "_" + str(fc)
                     if not arcpy.Exists(outfc):
-                        arcpy.CopyFeatures_management("fc_lyr", outfc)
-                        vars()[list2].append(fc)
-                        print "Export regional file for {0}".format(fc)
+                        if not arcpy.Exists(outpathgdb):
+                            CreateGDB(NAD83DIR, gdb, outpathgdb)
+                        arcpy.CopyFeatures_management(infc, outfc)
+                        print "Copied file {0} in region {1}".format(outfc, region)
+                    else:
+                        continue
                 else:
                     continue
-print "species in AK {0}".format(AK)
-print "species in AS {0}".format(AS)
-print "species in CNMMI {0}".format(CNMI)
-print "species in GU {0}".format(GU)
-print "species in HI {0}".format(HI)
-print "species in PLower48 {0}".format(Lower48)
-print "species in PR {0}".format(PR)
-print "species in VI {0}".format(VI)
-#TODO export the list of speices in each region to DF then export to CSV
+
 print "Script completed in: {0}".format(datetime.datetime.now() - start_script)
