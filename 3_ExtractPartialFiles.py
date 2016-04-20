@@ -24,7 +24,7 @@ index_dict = {'EntityID': 0,
               'Nihoa': 16,
               'NorthwesternHI': 17,
               'PR': 18,
-              'Palmyra Kingman': 19,
+              'Palmyra_Kingman': 19,
               'VI': 20,
               'Wake': 21}
 
