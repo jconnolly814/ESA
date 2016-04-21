@@ -3,11 +3,12 @@ import os
 import pandas as pd
 import arcpy
 
-masterlist = 'J:\Workspace\MasterLists\CSV\MasterListESA_April2015_20151015_20151124.csv'
-regionsgdb_csv = r'J:\Workspace\ESA_Species\ForCoOccur\Dict\regionsgdb_simplifed.csv'
+masterlist = 'J:\Workspace\MasterLists\April2015Lists\CSV\MasterListESA_April2015_20151015_20151124.csv'
 # TODO take table and load as a list in script so that there doesn't need to be a standalone document
 
-skiplist = []  # species groups that were already run
+skiplist = ['Amphibians', 'Arachnids',  'Clams', 'Conifers and Cycads', 'Corals', 'Crustaceans',
+            'Ferns and Allies', 'Fishes', 'Flowering Plants', 'Insects', 'Lichens', 'Mammals',
+            'Reptiles', 'Snails']  # species groups that were already run
 
 index_dict = {'EntityID': 0,
               'AK': 5,
@@ -62,12 +63,12 @@ while QAanswer:
         QAanswer = False
         if user_input == 'Yes':
             infolder = 'J:\Workspace\ESA_Species\ForCoOccur\Range'
-            regionallocations = 'J:\Workspace\MasterOverlap\Panda\WGSRange_SpeciesRegions_all.xlsx'
+            regionallocations = 'J:\Workspace\MasterOverlap\Panda\NAD83_Range_SpeciesRegions_all_20160421.xlsx'
             print 'Running range files output will be located at {0}'.format(infolder)
         else:
             infolder = 'J:\Workspace\ESA_Species\ForCoOccur\CriticalHabitat'
             print 'Running critical habitat files output will be located at {0}'.format(infolder)
-            regionallocations = 'J:\Workspace\MasterOverlap\Panda\WGS_CH_Range_SpeciesRegions_all.xlsx'
+            regionallocations = 'J:\Workspace\MasterOverlap\Panda\NAD83_CH_SpeciesRegions_all_20160421.xlsx'
 
 gdblist = ["SingleNonLower48only.gdb", "SingleBoth.gdb", "Lower48Only.gdb"]
 

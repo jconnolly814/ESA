@@ -9,7 +9,7 @@ import datetime
 import sys
 import arcpy
 import shutil
-masterlist = 'J:\Workspace\MasterLists\CSV\MasterListESA_April2015_20151015_20151124.csv'
+masterlist = 'J:\Workspace\MasterLists\April2015Lists\CSV\MasterListESA_April2015_20151015_20151124.csv'
 templocation = r'C:\Workspace\temp\temp.gdb'
 inprj_dict = 'J:\Workspace\ESA_Species\ForCoOccur\Dict\Reproject_dict_simplfied.csv'
 # TODO incorpoate dict into script so that it does not need to load file separately
