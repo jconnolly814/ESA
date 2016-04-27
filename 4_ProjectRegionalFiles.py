@@ -131,7 +131,7 @@ for group in alpha_group:
             InGDB = InGDB.strip("\n")
             path, tail = os.path.split(InGDB)
             if regionname == "Lower48":
-                print 'Lower 48'
+                #print 'Lower 48'
                 path2, tail2 = os.path.split(path)
                 path3, tail3 = os.path.split(path2)
                 InGDB = path3 + os.sep + tail
@@ -141,7 +141,7 @@ for group in alpha_group:
 
             print '\nWorking on {0} in {1}'.format(group, regionname)
             outgdb_name = regionname + "_" + abb
-            print regionname
+            #print regionname
             #print abb
 
             WGScoordFile = proj_Folder + os.sep + 'WGS 1984.prj'
@@ -151,7 +151,6 @@ for group in alpha_group:
             dscprj = arcpy.Describe(prj)
             prjsr = dscprj.spatialReference
             prj_datum = prjsr.GCS.datumName
-
 
             #print InGDB
             arcpy.env.workspace = InGDB
