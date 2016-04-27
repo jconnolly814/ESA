@@ -6,9 +6,7 @@ import arcpy
 masterlist = 'J:\Workspace\MasterLists\April2015Lists\CSV\MasterListESA_April2015_20151015_20151124.csv'
 # TODO take table and load as a list in script so that there doesn't need to be a standalone document
 
-skiplist = ['Amphibians', 'Arachnids',  'Clams', 'Conifers and Cycads', 'Corals', 'Crustaceans',
-            'Ferns and Allies', 'Fishes', 'Flowering Plants', 'Insects', 'Lichens', 'Mammals',
-            'Reptiles', 'Snails']  # species groups that were already run
+skiplist = []  # species groups that were already run
 
 index_dict = {'EntityID': 0,
               'AK': 5,

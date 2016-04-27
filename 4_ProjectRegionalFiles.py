@@ -120,23 +120,29 @@ for group in alpha_group:
             line = line.split(',')
             gdb = str(line[0])
             gdb = gdb.strip("\n")
-            print gdb
-            regionname = gdb.split("_")
-            print regionname
-            regionname = regionname[0]
+            regionname = str(line[3])
+            regionname = regionname.strip("\n")
             if regionname in skipregions:
                 continue
-            regionname = regionname.strip('.gdb')
-            print '\nWorking on {0} in {1}'.format(group, regionname)
             prj = line[1]
             prj = proj_Folder + os.sep + prj
             abb = line[2]
             InGDB = infolder + os.sep + gdb
             InGDB = InGDB.strip("\n")
+            path, tail = os.path.split(InGDB)
+            if regionname == "Lower48":
+                print 'Lower 48'
+                path2, tail2 = os.path.split(path)
+                path3, tail3 = os.path.split(path2)
+                InGDB = path3 + os.sep + tail
+
+            if not arcpy.Exists(InGDB):
+                continue
+
+            print '\nWorking on {0} in {1}'.format(group, regionname)
             outgdb_name = regionname + "_" + abb
             print regionname
-            print abb
-
+            #print abb
 
             WGScoordFile = proj_Folder + os.sep + 'WGS 1984.prj'
             prjFile = proj_Folder + os.sep + prj
@@ -146,13 +152,8 @@ for group in alpha_group:
             prjsr = dscprj.spatialReference
             prj_datum = prjsr.GCS.datumName
 
-            path, tail = os.path.split(InGDB)
-            if tail == 'Lower48Only.gdb':
-                path2, tail2 = os.path.split(path)
-                path3, tail3 = os.path.split(path2)
-                InGDB = path3 + os.sep + tail
 
-            print InGDB
+            #print InGDB
             arcpy.env.workspace = InGDB
             fcList = arcpy.ListFeatureClasses()
             # print fcList
@@ -165,7 +166,9 @@ for group in alpha_group:
                 outfolder = groupfolder + os.sep + "ProjectedSinglePart"
                 CreateDirectory(outfolder)
                 outGDB = outfolder + os.sep + outgdb_name
-                CreateGDB(outfolder, outgdb_name, outGDB)
+                # print outGDB
+                if not arcpy.Exists(outGDB):
+                    CreateGDB(outfolder, outgdb_name, outGDB)
 
                 for fc in fcList:
 

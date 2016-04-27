@@ -6,12 +6,11 @@ import arcpy
 
 dissolveFields = ['NAME', 'Name_sci', 'SPCode', 'VIPCode', 'FileName', 'EntityID']
 
-masterlist = 'J:\Workspace\MasterLists\CSV\MasterListESA_April2015_20151015_20151124.csv'
-
+masterlist = 'J:\Workspace\MasterLists\April2015Lists\CSV\MasterListESA_April2015_20151015_20151124.csv'
 gdbRegions_dict = 'J:\Workspace\ESA_Species\ForCoOccur\Dict\gdbRegions_dict.csv'
 
 skipgroup = []
-skipregions= []
+skipregions = []
 
 while True:
     user_input = raw_input('Are you running range files Yes or No? ')
@@ -98,10 +97,11 @@ for group in alpha_group:
             gdb = str(line[0])
             gdb = gdb.strip("\n")
             regionsgdb = groupfolder + os.sep + "ProjectedSinglePart" + os.sep + gdb
-            print regionsgdb
+
             if not arcpy.Exists(regionsgdb):
                 continue
             else:
+                #print regionsgdb
 
                 regionname = gdb.split("_")
                 regionname = regionname[0]
@@ -120,51 +120,46 @@ for group in alpha_group:
                     outgdb_name = gdb.strip('\n')
                     outGDB = groupfolder + os.sep + outgdb_name
                     if not arcpy.Exists(outGDB):
-                        print outGDB
-                        CreateGDB(groupfolder, outgdb_name, outGDB)
-                    else:
-                        arcpy.env.workspace = outGDB
-                        fcList2 = arcpy.ListFeatureClasses()
-                        total2 = len(fcList2)
-                        if total == total2:
-                            print "\nAll {0} species files Dissolved in {1}".format(group, regionname)
-                            continue
-                        else:
-                            arcpy.env.workspace = regionsgdb
-
-
-                    # print regionsgdb
-                    for fc in fcList:
-                        #print fc
-                        outgdb_name = gdb.strip('\n')
-
-
-
-                        infile = regionsgdb + os.sep + fc
-                        outfile = outGDB + os.sep + fc
                         #print outGDB
-
-                        if arcpy.Exists(outfile):
-                            #print "Already dissolved {0}".format(fc)
-                            continue
-                        else:
-
-                            arcpy.Delete_management("temp_lyr")
-                            arcpy.MakeFeatureLayer_management(infile, "temp_lyr")
-
-                            arcpy.Dissolve_management("temp_lyr", outfile, dissolveFields, "", "MULTI_PART",
-                                                      "DISSOLVE_LINES")
-                            print "Dissolving {0} in {1}".format(fc, regionname)
-                            print "completed {0} {1} remaining in {2}".format(fc, total, group)
-                            total -= 1
+                        CreateGDB(groupfolder, outgdb_name, outGDB)
 
                     arcpy.env.workspace = outGDB
                     fcList2 = arcpy.ListFeatureClasses()
-                    if len(fcList) == len(fcList2):
+                    total2 = len(fcList2)
+                    if total == total2:
                         print "\nAll {0} species files Dissolved in {1}".format(group, regionname)
+                        continue
                     else:
-                        print "\nCheck for missing {0} dissolved files in {1}".format(group, regionname)
-                        break
+                        arcpy.env.workspace = regionsgdb
+                        for fc in fcList:
+                            # print fc
+                            outgdb_name = gdb.strip('\n')
+
+                            infile = regionsgdb + os.sep + fc
+                            outfile = outGDB + os.sep + fc
+                            # print outGDB
+
+                            if arcpy.Exists(outfile):
+                                # print "Already dissolved {0}".format(fc)
+                                continue
+                            else:
+
+                                arcpy.Delete_management("temp_lyr")
+                                arcpy.MakeFeatureLayer_management(infile, "temp_lyr")
+
+                                arcpy.Dissolve_management("temp_lyr", outfile, dissolveFields, "", "MULTI_PART",
+                                                      "DISSOLVE_LINES")
+                                #print "Dissolving {0} in {1}".format(fc, regionname)
+                                print "completed {0} {1} remaining in {2}".format(fc, total, group)
+                                total -= 1
+
+                arcpy.env.workspace = outGDB
+                fcList2 = arcpy.ListFeatureClasses()
+                if len(fcList) == len(fcList2):
+                    print "\nAll {0} species files Dissolved in {1}".format(group, regionname)
+                else:
+                    print "\nCheck for missing {0} dissolved files in {1}".format(group, regionname)
+                    break
     inputFile2.close()
 
 end = datetime.datetime.now()
