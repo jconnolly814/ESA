@@ -10,7 +10,7 @@ import sys
 import arcpy
 import shutil
 masterlist = 'J:\Workspace\MasterLists\April2015Lists\CSV\MasterListESA_April2015_20151015_20151124.csv'
-templocation = r'C:\Workspace\temp\temp.gdb'
+templocation = r'C:\Workspace\temp\temp2.gdb'
 inprj_dict = 'J:\Workspace\ESA_Species\ForCoOccur\Dict\Reproject_dict_simplfied.csv'
 # TODO incorpoate dict into script so that it does not need to load file separately
 
@@ -81,17 +81,15 @@ start_script = datetime.datetime.now()
 print "Script started at {0}".format(start_script)
 
 
-path, gdb = os.path.split(templocation)
-temppath = path + os.sep + gdb
+patht, gdb = os.path.split(templocation)
+temppath = patht + os.sep + gdb
 midGBD = temppath
-CreateDirectory(path)
-CreateGDB(path, gdb, temppath)
+CreateDirectory(patht)
+CreateGDB(patht, gdb, temppath)
 
 if os.path.exists(temppath):
     FirstRun = False
-# if FirstRun:
-# if os.path.exists(temppath):
-# sys.exit("Choose a different temp gdb name")
+
 
 grouplist = []
 prjdict = createdicts(inprj_dict)
@@ -131,7 +129,6 @@ for group in alpha_group:
             InGDB = InGDB.strip("\n")
             path, tail = os.path.split(InGDB)
             if regionname == "Lower48":
-                #print 'Lower 48'
                 path2, tail2 = os.path.split(path)
                 path3, tail3 = os.path.split(path2)
                 InGDB = path3 + os.sep + tail
@@ -141,21 +138,10 @@ for group in alpha_group:
 
             print '\nWorking on {0} in {1}'.format(group, regionname)
             outgdb_name = regionname + "_" + abb
-            #print regionname
-            #print abb
 
-            WGScoordFile = proj_Folder + os.sep + 'WGS 1984.prj'
-            prjFile = proj_Folder + os.sep + prj
-            dscwgs = arcpy.Describe(WGScoordFile)
-            wgscoord_sys = dscwgs.spatialReference
-            dscprj = arcpy.Describe(prj)
-            prjsr = dscprj.spatialReference
-            prj_datum = prjsr.GCS.datumName
-
-            #print InGDB
             arcpy.env.workspace = InGDB
             fcList = arcpy.ListFeatureClasses()
-            # print fcList
+
             total = len(fcList)
             if len(fcList) == 0:
                 print "There are no {0} species in {1}".format(group, regionname)
@@ -168,6 +154,22 @@ for group in alpha_group:
                 # print outGDB
                 if not arcpy.Exists(outGDB):
                     CreateGDB(outfolder, outgdb_name, outGDB)
+                else:
+
+                    arcpy.env.workspace = outGDB
+                    fcList2 = arcpy.ListFeatureClasses()
+
+                    if len(fcList) == len(fcList2):
+                        print "All {0} species files projected in {1}".format(group, regionname)
+                        continue
+
+                WGScoordFile = proj_Folder + os.sep + 'WGS 1984.prj'
+                prjFile = proj_Folder + os.sep + prj
+                dscwgs = arcpy.Describe(WGScoordFile)
+                wgscoord_sys = dscwgs.spatialReference
+                dscprj = arcpy.Describe(prj)
+                prjsr = dscprj.spatialReference
+                prj_datum = prjsr.GCS.datumName
 
                 for fc in fcList:
 
@@ -180,8 +182,7 @@ for group in alpha_group:
 
                         prj_fcname = fc + "_" + regionname + "prj"
                         prj_fc = outGDB + os.sep + prj_fcname
-                        # print prj_fc
-                        # print infc
+
                         if not arcpy.Exists(prj_fc):
                             arcpy.Project_management(infc, prj_fc, prjsr)
                             print "completed {0} {1} remaining in {2}".format(fc, total, group)
@@ -189,7 +190,6 @@ for group in alpha_group:
                             continue
                         else:
                             total -= 1
-                            # print " already exists {0} {1} remaining in {2}".format(fc, total, group)
                             continue
 
                     if prj_datum == "D_WGS_1984":
@@ -210,7 +210,6 @@ for group in alpha_group:
                             total -= 1
                             continue
                         else:
-                            # print " already exists {0} {1} remaining in {2}".format(fc, total, group)
                             total -= 1
                             continue
 
@@ -232,17 +231,17 @@ while True:
         print('\nThat is not a valid option! Type Yes or No')
 
 if user_input == 'Yes':
-    tempfiles = os.listdir(path)
+    tempfiles = os.listdir(patht)
     for v in tempfiles:
-        delfile = os.path.join(path, v)
+        delfile = os.path.join(patht, v)
         if os.path.exists(delfile):
             shutil.rmtree(delfile)
             print "deleting {0}".format(delfile)
-    print "deleting {0}".format(path)
-    if os.path.exists(path):
-        shutil.rmtree(path)
+    print "deleting {0}".format(patht)
+    if os.path.exists(patht):
+        shutil.rmtree(patht)
 elif user_input == 'No':
-    print "Temp files found at {0}".format(path)
+    print "Temp files found at {0}".format(patht)
 else:
     print 'Del failed'
 
