@@ -145,7 +145,7 @@ for group in alpha_group:
     for regions in listKeys:
         if regions == 'EntityID':  # TODO remove this hard code
             continue
-        region = regions
+        orgregion = regions
         print "Working with {0}".format(regions)
         resultfolder = infolder + os.sep + group
         regionsDIR = resultfolder + os.sep + "Regions"
@@ -154,17 +154,21 @@ for group in alpha_group:
 
         NAD83DIR = regionsDIR + os.sep + 'NAD83'
         CreateDirectory(NAD83DIR)
-        gdb = GDB_Dict[regions]
-        outpathgdb = NAD83DIR + os.sep + gdb
-
+        orggdb = GDB_Dict[regions]
 
         for value in gdblist:
-            if value == "SingleBoth.gdb" and regions == "Lower48":
-                outpathgdb = NAD83DIR + os.sep + 'PLower48_Singlepart.gdb'
-                region = 'PLower48'
-
+            if value == "SingleBoth.gdb":
+                if regions == "L48":
+                    gdb = 'PLower48_Singlepart.gdb'
+                    outpathgdb = NAD83DIR + os.sep + gdb
+                    region = 'PLower48'
+            else:
+                gdb = orggdb
+                outpathgdb = NAD83DIR + os.sep + gdb
+                region = orgregion
 
             inGDB = resultfolder + os.sep + value
+
             for fc in fcs_in_workspace(inGDB):
                 infc = inGDB + os.sep + fc
                 entid = fc.split("_")
