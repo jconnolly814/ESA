@@ -15,7 +15,7 @@ templocation = r'C:\Workspace\temp\temp.gdb'
 inprj_dict = 'J:\Workspace\ESA_Species\ForCoOccur\Dict\Reproject_dict_simplfied.csv'
 # TODO incorpoate dict into script so that it does not need to load file separately
 
-skipgroup = ['Arachnids', 'Birds', 'Clams', 'Conifers and Cycads', 'Corals', 'Crustaceans', 'Ferns and Allies', 'Fishes', 'Flowering Plants', 'Insects', 'Lichens', 'Mammals', 'Reptiles', 'Snails']
+skipgroup = []
 skipregions = []
 
 # TODO had in try except loop that will export completed regions and groups if the script bombs to  be used as inputs when restarted
@@ -137,7 +137,7 @@ for group in alpha_group:
             if not arcpy.Exists(InGDB):
                 continue
 
-            print '\nWorking on {0} in {1}'.format(group, regionname)
+            print '\nWorking on {0} in {1} in {2}'.format(group, regionname, prj)
             outgdb_name = regionname + "_" + abb
 
             arcpy.env.workspace = InGDB
