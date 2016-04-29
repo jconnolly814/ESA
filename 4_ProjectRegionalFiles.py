@@ -9,14 +9,16 @@ import datetime
 import sys
 import arcpy
 import shutil
+
 masterlist = 'J:\Workspace\MasterLists\April2015Lists\CSV\MasterListESA_April2015_20151015_20151124.csv'
-templocation = r'C:\Workspace\temp\temp2.gdb'
+templocation = r'C:\Workspace\temp\temp.gdb'
 inprj_dict = 'J:\Workspace\ESA_Species\ForCoOccur\Dict\Reproject_dict_simplfied.csv'
 # TODO incorpoate dict into script so that it does not need to load file separately
 
-skipgroup = []
+skipgroup = ['Arachnids', 'Birds', 'Clams', 'Conifers and Cycads', 'Corals', 'Crustaceans', 'Ferns and Allies', 'Fishes', 'Flowering Plants', 'Insects', 'Lichens', 'Mammals', 'Reptiles', 'Snails']
 skipregions = []
 
+# TODO had in try except loop that will export completed regions and groups if the script bombs to  be used as inputs when restarted
 while True:
     user_input = raw_input('Are you running range files Yes or No? ')
     if user_input not in ['Yes', 'No']:
@@ -27,11 +29,13 @@ while True:
 
             proj_Folder = 'J:\Workspace\projections'
             print 'Running range files output will be located at {0}'.format(inFolder)
+            speciestype = 'Range'
             break
         else:
             inFolder = 'J:\Workspace\ESA_Species\ForCoOccur\CriticalHabitat'
 
             proj_Folder = 'J:\Workspace\projections'
+            speciestype = 'Critical Habitat'
             print 'Running critical habitat files output will be located at {0}'.format(inFolder)
             break
 # skipgroup = []
@@ -80,7 +84,6 @@ arcpy.env.scratchWorkspace = ""
 start_script = datetime.datetime.now()
 print "Script started at {0}".format(start_script)
 
-
 patht, gdb = os.path.split(templocation)
 temppath = patht + os.sep + gdb
 midGBD = temppath
@@ -89,7 +92,6 @@ CreateGDB(patht, gdb, temppath)
 
 if os.path.exists(temppath):
     FirstRun = False
-
 
 grouplist = []
 prjdict = createdicts(inprj_dict)
@@ -112,7 +114,6 @@ for group in alpha_group:
     groupfolder = inFolder + os.sep + group + os.sep + "Regions"
     infolder = groupfolder + os.sep + "NAD83"
 
-    print groupfolder
     with open(inprj_dict, 'rU') as inputFile2:
         for line in inputFile2:
             line = line.split(',')
@@ -128,10 +129,10 @@ for group in alpha_group:
             InGDB = infolder + os.sep + gdb
             InGDB = InGDB.strip("\n")
             path, tail = os.path.split(InGDB)
-            if regionname == "Lower48":
-                path2, tail2 = os.path.split(path)
-                path3, tail3 = os.path.split(path2)
-                InGDB = path3 + os.sep + tail
+            #if regionname == "Lower48":
+                #path2, tail2 = os.path.split(path)
+                #path3, tail3 = os.path.split(path2)
+                #InGDB = path3 + os.sep + tail
 
             if not arcpy.Exists(InGDB):
                 continue
@@ -144,14 +145,13 @@ for group in alpha_group:
 
             total = len(fcList)
             if len(fcList) == 0:
-                print "There are no {0} species in {1}".format(group, regionname)
+                print "There are no {0} species {2} in {1}".format(group, regionname, speciestype)
                 continue
             else:
                 outgdb_name = outgdb_name.strip('\n')
                 outfolder = groupfolder + os.sep + "ProjectedSinglePart"
                 CreateDirectory(outfolder)
                 outGDB = outfolder + os.sep + outgdb_name
-                # print outGDB
                 if not arcpy.Exists(outGDB):
                     CreateGDB(outfolder, outgdb_name, outGDB)
                 else:
@@ -160,7 +160,7 @@ for group in alpha_group:
                     fcList2 = arcpy.ListFeatureClasses()
 
                     if len(fcList) == len(fcList2):
-                        print "All {0} species files projected in {1}".format(group, regionname)
+                        print "All {0} species files {2} projected in {1}".format(group, regionname, speciestype)
                         continue
 
                 WGScoordFile = proj_Folder + os.sep + 'WGS 1984.prj'
@@ -217,14 +217,14 @@ for group in alpha_group:
                 fcList2 = arcpy.ListFeatureClasses()
 
                 if len(fcList) == len(fcList2):
-                    print "All {0} species files projected in {1}".format(group, regionname)
+                    print "All {0} species files {2} projected in {1}".format(group, regionname, speciestype)
                 else:
-                    print "Check for missing {0} files in {1}".format(group, regionname)
+                    print "Check for missing {0} files in {1}, {2}".format(group, regionname, speciestype)
                     break
     inputFile2.close()
 
 while True:
-    user_input = raw_input('Do you want to delete temp files Yes or No: ')
+    user_input = raw_input('Do you want to delete temp files at {0} Yes or No: '.format(patht))
     if user_input in ['Yes', 'No']:
         break
     else:

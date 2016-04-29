@@ -22,12 +22,14 @@ while True:
 
             proj_Folder = 'J:\Workspace\projections'
             print 'Running range files output will be located at {0}'.format(infolder)
+            speciestype = 'Range'
             break
         else:
             infolder = 'J:\Workspace\ESA_Species\ForCoOccur\CriticalHabitat'
 
             proj_Folder = 'J:\Workspace\projections'
             print 'Running critical habitat files output will be located at {0}'.format(infolder)
+            speciestype = 'Critical Habitat'
             break
 
 
@@ -114,7 +116,7 @@ for group in alpha_group:
                 fcList = arcpy.ListFeatureClasses()
                 total = len(fcList)
                 if total == 0:
-                    print "There are no {1} species in {0}".format(regionname, group)
+                    print "There are no {1} species {2} in {0}".format(regionname, group, speciestype)
                     continue
                 else:
                     outgdb_name = gdb.strip('\n')
@@ -127,7 +129,7 @@ for group in alpha_group:
                     fcList2 = arcpy.ListFeatureClasses()
                     total2 = len(fcList2)
                     if total == total2:
-                        print "\nAll {0} species files Dissolved in {1}".format(group, regionname)
+                        print "All {0} species files {2} Dissolved in {1}".format(group, regionname, speciestype)
                         continue
                     else:
                         arcpy.env.workspace = regionsgdb
@@ -156,9 +158,9 @@ for group in alpha_group:
                 arcpy.env.workspace = outGDB
                 fcList2 = arcpy.ListFeatureClasses()
                 if len(fcList) == len(fcList2):
-                    print "\nAll {0} species files Dissolved in {1}".format(group, regionname)
+                    print "All {0} species {2} files Dissolved in {1}".format(group, regionname, speciestype)
                 else:
-                    print "\nCheck for missing {0} dissolved files in {1}".format(group, regionname)
+                    print "Check for missing {0} dissolved files in {1}, {2}".format(group, regionname, speciestype)
                     break
     inputFile2.close()
 
