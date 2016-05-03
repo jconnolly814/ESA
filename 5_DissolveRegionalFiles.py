@@ -88,9 +88,11 @@ inputFile.close()
 
 unq_grps = set(grouplist)
 alpha_group = sorted(unq_grps)
-
+checkbool = False
 for group in alpha_group:
-    if group in skipgroup:
+    if checkbool:
+        break
+    elif group in skipgroup:
         continue
     groupfolder = infolder + os.sep + group + os.sep + "Regions"
     with open(gdbRegions_dict, 'rU') as inputFile2:
@@ -110,7 +112,7 @@ for group in alpha_group:
                 if regionname in skipregions:
                     continue
                 # print regionname
-                print "\nWorking on {0} in {1}".format(group, regionname)
+
                 arcpy.env.workspace = regionsgdb
                 # print InGDB
                 fcList = arcpy.ListFeatureClasses()
@@ -124,6 +126,7 @@ for group in alpha_group:
                     if not arcpy.Exists(outGDB):
                         #print outGDB
                         CreateGDB(groupfolder, outgdb_name, outGDB)
+                    print "\nWorking on {0} in {1} outfc located at {2} ".format(group, regionname, outGDB)
 
                     arcpy.env.workspace = outGDB
                     fcList2 = arcpy.ListFeatureClasses()
@@ -161,6 +164,7 @@ for group in alpha_group:
                     print "All {0} species {2} files Dissolved in {1}".format(group, regionname, speciestype)
                 else:
                     print "Check for missing {0} dissolved files in {1}, {2}".format(group, regionname, speciestype)
+                    checkbool = True
                     break
     inputFile2.close()
 
