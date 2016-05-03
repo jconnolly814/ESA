@@ -60,7 +60,6 @@ listKeys = colincluded.keys()
 regions.sort()
 listKeys.sort()
 regionsindex = {}
-
 listheader = []
 
 if colincluded['EntityID'] != 0:
