@@ -12,6 +12,7 @@ gdbRegions_dict = 'J:\Workspace\ESA_Species\ForCoOccur\Dict\gdbRegions_dict.csv'
 skipgroup = []
 skipregions = []
 
+## TODO check to see if do this  by regions and then group would simplify code
 while True:
     user_input = raw_input('Are you running range files Yes or No? ')
     if user_input not in ['Yes', 'No']:
@@ -105,14 +106,10 @@ for group in alpha_group:
             if not arcpy.Exists(regionsgdb):
                 continue
             else:
-                #print regionsgdb
-
                 regionname = gdb.split("_")
                 regionname = regionname[0]
                 if regionname in skipregions:
                     continue
-                # print regionname
-
                 arcpy.env.workspace = regionsgdb
                 # print InGDB
                 fcList = arcpy.ListFeatureClasses()
@@ -124,7 +121,7 @@ for group in alpha_group:
                     outgdb_name = gdb.strip('\n')
                     outGDB = groupfolder + os.sep + outgdb_name
                     if not arcpy.Exists(outGDB):
-                        #print outGDB
+                        # print outGDB
                         CreateGDB(groupfolder, outgdb_name, outGDB)
                     print "\nWorking on {0} in {1} outfc located at {2} ".format(group, regionname, outGDB)
 
@@ -153,8 +150,8 @@ for group in alpha_group:
                                 arcpy.MakeFeatureLayer_management(infile, "temp_lyr")
 
                                 arcpy.Dissolve_management("temp_lyr", outfile, dissolveFields, "", "MULTI_PART",
-                                                      "DISSOLVE_LINES")
-                                #print "Dissolving {0} in {1}".format(fc, regionname)
+                                                          "DISSOLVE_LINES")
+                                # print "Dissolving {0} in {1}".format(fc, regionname)
                                 print "completed {0} {1} remaining in {2}".format(fc, total, group)
                                 total -= 1
 
