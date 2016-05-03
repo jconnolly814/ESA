@@ -1,5 +1,4 @@
 import os
-
 import datetime
 
 import arcpy
@@ -9,8 +8,7 @@ gdbRegions_dict = 'J:\Workspace\ESA_Species\ForCoOccur\Dict\gdbRegions_dict.csv'
 outFolderCompGDB = r'J:\Workspace\ESA_Species\ForCoOccur\Composites\GDB\April_16Composites'
 skipgroup = []
 date = '20160502'
-pdate = []
-# pdate = ['201501116']
+
 compfield = ['EntityID', 'FileName', 'NAME', 'Name_sci', 'SPCODE', 'VPCode']
 while True:
     user_input = raw_input('Are you running range files Yes or No? ')
