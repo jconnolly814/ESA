@@ -2,7 +2,7 @@ import datetime
 
 import arcpy
 
-inlocation = 'J:\Workspace\ESA_Species\ForCoOccur\Composites\GDB\April_16Composites\L48_CH_SpGroup_Composite.gdb'
+inlocation = 'J:\Workspace\ESA_Species\ForCoOccur\Composites\GDB\April_16Composites\NL48_CH_SpGroup_Composite.gdb'
 arcpy.env.workspace = inlocation
 listfiles = arcpy.ListFeatureClasses()
 

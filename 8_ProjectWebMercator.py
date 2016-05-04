@@ -6,17 +6,19 @@ import shutil
 import arcpy
 
 L48 = True
-FirstRun = True
-ingdb = r'J:\Workspace\ESA_Species\ForCoOccur\Composites\GDB\March2016 composites\L48_CH_SpGroup_Composite.gdb'
-outgdb = r'C:\WorkSpace\Webapp\test.gdb'
+FirstRun = False
+ingdb = r'J:\Workspace\ESA_Species\ForCoOccur\Composites\GDB\April_16Composites\L48_CH_SpGroup_Composite.gdb'
+outgdb = r'J:\Workspace\ESA_Species\ForCoOccur\Composites\GDB\April_16Composites\WebApp\L48_CH_SpGroup_Composite_Web.gdb'
 
 proj_Folder = 'J:\Workspace\projections'
 desiredProject = 'J:\Workspace\projections\WGS 1984 Web Mercator (auxiliary sphere).prj'
 prjABB = 'WebMercator'
-templocation = r'C:\Workspace\temp\temp.gdb'
+templocation = r'C:\Workspace\temp\temp1.gdb'
 groupindex = 2
 regionindex = 0
 
+
+##TODO add check to make sure max composite is taken
 
 def fcs_in_workspace(workspace):
     arcpy.env.workspace = workspace

@@ -1,21 +1,10 @@
-import arcpy
 import os
 
+import arcpy
+
+
 # inpout folder or GDB- will look through all GDBs if it is a folder as a list, can be multiple locations
-inlocation = ['J:\Workspace\ESA_Species\ForCoOccur\Range\Amphibians\Regions',
-              'J:\Workspace\ESA_Species\ForCoOccur\Range\Arachnids\Regions',
-              'J:\Workspace\ESA_Species\ForCoOccur\Range\Birds\Regions',
-              'J:\Workspace\ESA_Species\ForCoOccur\Range\Clams\Regions',
-              'J:\Workspace\ESA_Species\ForCoOccur\Range\Conifers and Cycads\Regions',
-              'J:\Workspace\ESA_Species\ForCoOccur\Range\Corals\Regions',
-              'J:\Workspace\ESA_Species\ForCoOccur\Range\Crustaceans\Regions',
-              'J:\Workspace\ESA_Species\ForCoOccur\Range\Ferns and Allies\Regions',
-              'J:\Workspace\ESA_Species\ForCoOccur\Range\Flowering Plants\Regions',
-              'J:\Workspace\ESA_Species\ForCoOccur\Range\Insects\Regions',
-              'J:\Workspace\ESA_Species\ForCoOccur\Range\Lichens\Regions',
-              'J:\Workspace\ESA_Species\ForCoOccur\Range\Mammals\Regions'
-              'J:\Workspace\ESA_Species\ForCoOccur\Range\Reptiles\Regions',
-              'J:\Workspace\ESA_Species\ForCoOccur\Range\Snails\Regions']
+inlocation = ['J:\Workspace\ESA_Species\ForCoOccur\Composites\GDB\April_16Composites']
 
 
 def fcs_in_workspace(workspace):
