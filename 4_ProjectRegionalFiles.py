@@ -18,7 +18,7 @@ inprj_dict = 'J:\Workspace\ESA_Species\ForCoOccur\Dict\Reproject_dict_simplfied.
 skipgroup = []
 skipregions = []
 
-# TODO had in try except loop that will export completed regions and groups if the script bombs to  be used as inputs when restarted
+# TODO had in try except loop that will export completed regions and groups if the script bombs to be used as inputs when restarted
 while True:
     user_input = raw_input('Are you running range files Yes or No? ')
     if user_input not in ['Yes', 'No']:

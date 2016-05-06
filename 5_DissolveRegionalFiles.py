@@ -138,6 +138,7 @@ for group in alpha_group:
                             outgdb_name = gdb.strip('\n')
 
                             infile = regionsgdb + os.sep + fc
+                            print infile
                             outfile = outGDB + os.sep + fc
                             # print outGDB
 

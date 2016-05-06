@@ -5,9 +5,10 @@ import arcpy
 
 
 
+
 ## TODO make updated for append so that the len list is equal to the len count of rows of comp
 masterlist = 'J:\Workspace\MasterLists\April2015Lists\CSV\MasterListESA_April2015_20151015_20151124.csv'
-refFC = 'J:\Workspace\ESA_Species\Range\NAD83\Amphibians.gdb\R_3849_poly_20150415_STD_NAD83'
+refFC = 'J:\Workspace\ESA_Species\ForCoOccur\CriticalHabitat\Mammals\Regions\Laysan_WebApp.gdb\Laysan_CH_2891_poly_20150428_NAD83_WGS84_Laysanprj'
 
 gdbRegions_dict = 'J:\Workspace\ESA_Species\ForCoOccur\Dict\gdbRegions_dict.csv'
 outFolderCompGDB = r'J:\Workspace\ESA_Species\ForCoOccur\Composites\GDB\April_16Composites'
@@ -45,12 +46,28 @@ while True:
             L48 = True
             outGDB = outFolderCompGDB + os.sep + 'L48_' + FileType + 'SpGroup_Composite.gdb'
             regiontype = "_L48_"
+            grouptail = "Regions"
             break
         else:
             L48 = False
-            outGDB = outFolderCompGDB + os.sep + 'NL48_' + FileType + 'SpGroup_Composite.gdb'
-            regiontype = "_NL48_"
-            break
+            user_input3 = raw_input('Are you running the Minor Islands? Yes or No ')
+            if user_input2 not in ['Yes', 'No']:
+                print 'This is not a valid answer'
+            else:
+                if user_input3 == 'Yes':
+                    L48 = False
+                    outGDB = outFolderCompGDB + os.sep + 'MinorIsland_' + FileType + 'SpGroup_Composite.gdb'
+                    regiontype = "_MI_"
+                    islands = True
+                    grouptail = "Regions"
+                    mislands = ['Howland', 'Johnston', 'Laysan', 'Mona', 'Necker', 'Nihoa', 'NorthwesternHI', 'Palmyra',
+                                'Wake']
+                    break
+                else:
+                    outGDB = outFolderCompGDB + os.sep + 'NL48_' + FileType + 'SpGroup_Composite.gdb'
+                    regiontype = "_NL48_"
+                    grouptail = "Regions"
+                    break
 
 arcpy.env.overwriteOutput = True  # ## Change this to False if you don't want GDB to be overwritten
 arcpy.env.scratchWorkspace = ""
@@ -161,8 +178,10 @@ with open(gdbRegions_dict, 'rU') as inputFile2:
             if regionname != "Lower48":
                 continue
             print '\nWorking on Region {0}, {1}...'.format(regionname, projection)
-
         else:
+            if islands:
+                if regionname not in mislands:
+                    continue
             if regionname == "Lower48":
                 continue
             print '\nWorking on Region {0},  {1}...'.format(regionname, projection)
@@ -172,7 +191,7 @@ with open(gdbRegions_dict, 'rU') as inputFile2:
             if group in skipgroup:
                 continue
 
-            groupfolder = infolder + os.sep + group + os.sep + "Regions"
+            groupfolder = infolder + os.sep + group + os.sep + grouptail
             if group == "Ferns and Allies":
                 group = "Ferns"
             elif group == 'Conifers and Cycads':
