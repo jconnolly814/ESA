@@ -11,7 +11,7 @@ skiplist = []
 
 ColIndexDict = dict(comname=7, sciname=8, spcode=26, vipcode=27, entid=0, group=1)
 final_fields = ['NAME', 'Name_sci', 'SPCode', 'VIPCode', 'FileName', 'EntityID']
-final_fieldsindex = dict(NAME=0, Name_sci=3, SPCode=4, VIPCode=5, EntityID=1)
+final_fieldsindex = dict(NAME=0, Name_sci=3, SPCode=4, VIPCode=5, EntityID=1)  # pos 2 is group
 
 ########Static variables
 reqindex = {'entid': 'Q1', 'group': 'Q2'}

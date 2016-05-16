@@ -144,6 +144,7 @@ for group in alpha_group:
 
                             if arcpy.Exists(outfile):
                                 # print "Already dissolved {0}".format(fc)
+                                total -= 1
                                 continue
                             else:
 
