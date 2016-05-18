@@ -8,7 +8,7 @@ masterlist = 'J:\Workspace\MasterLists\April2015Lists\CSV\MasterListESA_April201
 # TODO take table and load as a list in script so that there doesn't need to be a standalone document
 
 
-outcsv = r'J:\Workspace\ESA_Species\ForCoOccur\Composites\GDB\April_16Composites\WebApp\CheckMissingGIS_20160518.csv'
+outcsv = r'J:\Workspace\ESA_Species\ForCoOccur\Composites\CurrentComps\WebApp\CheckMissingGIS_20160518.csv'
 
 index_dict = {'EntityID': 0,
               'ComName': 1,
@@ -68,12 +68,12 @@ while QAanswer:
     else:
         QAanswer = False
         if user_input == 'Yes':
-            infolder = 'J:\Workspace\ESA_Species\ForCoOccur\Composites\GDB\April_16Composites\WebApp\R_WebApp_Composite.gdb'
+            infolder = 'J:\Workspace\ESA_Species\ForCoOccur\Composites\CurrentComps\WebApp\R_WebApp_Composite.gdb'
             regionallocations = 'J:\Workspace\MasterOverlap\Panda\NAD83_Range_SpeciesRegions_all_20160421.xlsx'
             fields = ['EntityID', 'Region', 'FileName']
 
         else:
-            infolder = 'J:\Workspace\ESA_Species\ForCoOccur\Composites\GDB\April_16Composites\WebApp\CH_WebApp_Composite.gdb'
+            infolder = 'J:\Workspace\ESA_Species\ForCoOccur\Composites\CurrentComps\WebApp\CH_WebApp_Composite.gdb'
             regionallocations = 'J:\Workspace\MasterOverlap\Panda\NAD83_CH_SpeciesRegions_all_20160421.xlsx'
             fields = ['EntityID', 'Region', 'FileName']
 
