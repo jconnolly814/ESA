@@ -6,9 +6,10 @@ import arcpy
 
 masterlist = 'J:\Workspace\MasterLists\April2015Lists\CSV\MasterListESA_April2015_20151015_20151124.csv'
 # TODO take table and load as a list in script so that there doesn't need to be a standalone document
+# TODO Clean up Region_cross the region field in att table should not have the _
+_
 
-
-outcsv = r'J:\Workspace\ESA_Species\ForCoOccur\Composites\CurrentComps\WebApp\CheckMissingGIS_20160518.csv'
+outcsv = r'J:\Workspace\ESA_Species\ForCoOccur\Composites\CurrentComps\WebApp\CH_CheckMissingGIS_20160518.csv'
 
 index_dict = {'EntityID': 0,
               'ComName': 1,
@@ -38,7 +39,8 @@ Region_cross = {'AK': 'AK',
                 'CNMI': 'CNMI',
                 'GU': 'GU',
                 'HI': 'HI',
-                'Howland Baker Jarvis': 'Howland_Baker_Jarvis',
+                'Howland_Baker_Jarvis': 'Howland Baker Jarvis',
+                'Howland Baker Jarvis': 'Howland Baker Jarvis',
                 'Johnston': 'Johnston',
                 'L48': 'L48',
                 'Lower48': 'L48',
@@ -49,7 +51,8 @@ Region_cross = {'AK': 'AK',
                 'Nihoa': 'Nihoa',
                 'NorthwesternHI': 'NorthwesternHI',
                 'PR': 'PR',
-                'Palmyra Kingman': 'Palmyra_Kingman',
+                'Palmyra Kingman': 'Palmyra Kingman',
+                'Palmyra_Kingman': 'Palmyra Kingman',
                 'VI': 'VI',
                 'Wake': 'Wake'}
 
