@@ -6,6 +6,7 @@ import arcpy
 
 
 
+
 # TODO make updated for append so that the len list is equal to the len count of rows of comp
 
 refFC = 'J:\Workspace\ESA_Species\ForCoOccur\Composites\GDB\April_16Composites\WebApp\Composites\L48_CH_SpGroup_Composite_Web.gdb\Lower48_CH_Amphibians_L48_AlbersEqualArea_20160503_NAD83_WGS84_WebMercator'
@@ -108,6 +109,7 @@ if not os.path.exists(outGDB):
 
 grouplist = []
 fulllist = []
+regionlist = []
 
 for v in FilesGDB:
     print v
@@ -115,11 +117,17 @@ for v in FilesGDB:
     singlelist = arcpy.ListFeatureClasses()
     for fc in singlelist:
         group = fc.split("_")
+        region = group[0]
         group = str(group[2])
+        regiongroup = region + "_" + group
+
         if group not in grouplist:
             grouplist.append(group)
-        path = v + os.sep + fc
-        fulllist.append(path)
+        if regiongroup not in regionlist:
+            path = v + os.sep + fc
+
+            fulllist.append(path)
+            regionlist.append(regiongroup)
 
 print grouplist
 
