@@ -114,7 +114,7 @@ col = 0
 row = 0
 
 outdict = {}
-entid_list =[]
+entid_list = []
 while row <= (rowindex - 1):
     currentlist = []
     entidnext = index_dict['EntityID']
@@ -128,7 +128,7 @@ while row <= (rowindex - 1):
     outdict[entid] = currentlist
     row += 1
 
-GISdict ={}
+GISdict = {}
 
 for fc in fcs_in_workspace(infolder):
     loop_start = datetime.datetime.now()
@@ -180,25 +180,25 @@ for value in entid_list:
             elif GIS == 'nan, GIS' and old == 'nan':
                 pass
                 else:
-                    del checkvalues[counter]
-                    checkvalues.insert(counter, ('Error'))
-            counter += 1
-        outlist.append(checkvalues)
-    else:
-        counter = 5  ## Hard code to start it at the first colem that is a range
+                del checkvalues[counter]
+                checkvalues.insert(counter, ('Error'))
+        counter += 1
+    outlist.append(checkvalues)
+else:
+    counter = 5  ## Hard code to start it at the first colem that is a range
 
-        while counter < colcount:
-            old = str(orgvalue[counter])
-            if old == 'Yes':
-                del orgvalue[counter]
-                orgvalue.insert(counter, ('Yes, None'))
-            elif old == 'nan':
-                pass
-            else:
-                print 'Error'
-                orgvalue.insert(counter, ('Error'))
-            counter += 1
-        outlist.append(orgvalue)
+    while counter < colcount:
+        old = str(orgvalue[counter])
+        if old == 'Yes':
+            del orgvalue[counter]
+            orgvalue.insert(counter, ('Yes, None'))
+        elif old == 'nan':
+            pass
+        else:
+            print 'Error'
+            orgvalue.insert(counter, ('Error'))
+        counter += 1
+    outlist.append(orgvalue)
 
 outDF = pd.DataFrame(outlist, columns=listheader)
 
