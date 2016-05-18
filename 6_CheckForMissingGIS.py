@@ -8,7 +8,7 @@ masterlist = 'J:\Workspace\MasterLists\April2015Lists\CSV\MasterListESA_April201
 # TODO take table and load as a list in script so that there doesn't need to be a standalone document
 
 
-outcsv = r'J:\Workspace\ESA_Species\ForCoOccur\Composites\GDB\April_16Composites\WebApp\CH_CheckMissingGIS_20160518.csv'
+outcsv = r'J:\Workspace\ESA_Species\ForCoOccur\Composites\GDB\April_16Composites\WebApp\CheckMissingGIS_20160518.csv'
 
 index_dict = {'EntityID': 0,
               'ComName': 1,
@@ -70,13 +70,12 @@ while QAanswer:
         if user_input == 'Yes':
             infolder = 'J:\Workspace\ESA_Species\ForCoOccur\Composites\GDB\April_16Composites\WebApp\R_WebApp_Composite.gdb'
             regionallocations = 'J:\Workspace\MasterOverlap\Panda\NAD83_Range_SpeciesRegions_all_20160421.xlsx'
-            fields = ['EntityID', 'Region']
+            fields = ['EntityID', 'Region', 'FileName']
 
         else:
             infolder = 'J:\Workspace\ESA_Species\ForCoOccur\Composites\GDB\April_16Composites\WebApp\CH_WebApp_Composite.gdb'
             regionallocations = 'J:\Workspace\MasterOverlap\Panda\NAD83_CH_SpeciesRegions_all_20160421.xlsx'
-            fields = ['EntityID', 'Region']
-
+            fields = ['EntityID', 'Region', 'FileName']
 
 
 def CreateDirectory(DBF_dir):
@@ -106,6 +105,7 @@ print rowindex
 
 listheader = regionaldf.columns.values.tolist()
 print listheader
+
 colcount = len(listheader)
 print colcount
 outDF = pd.DataFrame(columns=listheader)
@@ -129,10 +129,11 @@ while row <= (rowindex - 1):
     row += 1
 
 GISdict = {}
+filenamedict = {}
 
 for fc in fcs_in_workspace(infolder):
     loop_start = datetime.datetime.now()
-    print "Loop Started: {0}".format(loop_start)
+    print "Loop Started: {0} for {1}".format(loop_start, fc)
     with arcpy.da.SearchCursor(fc, fields) as cursor:
         for row in cursor:
             entid = str(row[0])
@@ -144,6 +145,9 @@ for fc in fcs_in_workspace(infolder):
             del regionalloc[region_index]
             regionalloc.insert(region_index, (str(currentvalues) + ', ' + 'GIS'))
             GISdict[entid] = regionalloc
+            filenamedict[entid] = row[2]
+
+
 
 col = 0
 row = 0
@@ -159,47 +163,53 @@ while row <= (rowindex - 1):
         currentlist.append(value)
     outdict[entid] = currentlist
     row += 1
-
+addatt = ["GISFile", "FileName"]
+listheader.extend(addatt)
 GISent = GISdict.keys()
 outlist = []
 for value in entid_list:
+    append = 'NA'
+    filename = 'NA'
     orgvalue = outdict[value]
     counter = 0
 
     if value in GISent:
         checkvalues = GISdict[value]
-
         while counter < colcount:
-
             GIS = str(checkvalues[counter])
             old = str(orgvalue[counter])
             if GIS == old:
                 pass
             elif GIS == 'Yes, GIS' and old == 'Yes':
-                pass
+                append = 'Yes'
             elif GIS == 'nan, GIS' and old == 'nan':
-                pass
-                else:
+                append = 'Yes'
+            else:
                 del checkvalues[counter]
                 checkvalues.insert(counter, ('Error'))
-        counter += 1
-    outlist.append(checkvalues)
-else:
-    counter = 5  ## Hard code to start it at the first colem that is a range
-
-    while counter < colcount:
-        old = str(orgvalue[counter])
-        if old == 'Yes':
-            del orgvalue[counter]
-            orgvalue.insert(counter, ('Yes, None'))
-        elif old == 'nan':
-            pass
-        else:
-            print 'Error'
-            orgvalue.insert(counter, ('Error'))
-        counter += 1
-    outlist.append(orgvalue)
-
+            counter += 1
+        filename = str(filenamedict[value])
+        checkvalues.append(append)
+        checkvalues.append(filename)
+        outlist.append(checkvalues)
+    else:
+        counter = 5  ## Hard code to start it at the first colem that is a range
+        while counter < colcount:
+            old = str(orgvalue[counter])
+            if old == 'Yes':
+                del orgvalue[counter]
+                orgvalue.insert(counter, ('Yes, None'))
+                append = 'No'
+            elif old == 'nan':
+                pass
+            else:
+                print 'Error'
+                orgvalue.insert(counter, ('Error'))
+            counter += 1
+        orgvalue.append(append)
+        orgvalue.append(filename)
+        outlist.append(orgvalue)
+print outlist
 outDF = pd.DataFrame(outlist, columns=listheader)
 
 # print outDF

@@ -6,14 +6,15 @@ import arcpy
 
 
 
+
 ## TODO make updated for append so that the len list is equal to the len count of rows of comp
 masterlist = 'J:\Workspace\MasterLists\April2015Lists\CSV\MasterListESA_April2015_20151015_20151124.csv'
 refFC = 'J:\Workspace\ESA_Species\ForCoOccur\CriticalHabitat\Mammals\Regions\Laysan_WebApp.gdb\Laysan_CH_2891_poly_20150428_NAD83_WGS84_Laysanprj'
 
 gdbRegions_dict = 'J:\Workspace\ESA_Species\ForCoOccur\Dict\gdbRegions_dict.csv'
-outFolderCompGDB = r'J:\Workspace\ESA_Species\ForCoOccur\Composites\GDB\April_16Composites'
+outFolderCompGDB = r'J:\Workspace\ESA_Species\ForCoOccur\Composites\GDB\May2016'
 skipgroup = []
-date = '20160503'
+date = '20160518'
 
 compfield = ['EntityID', 'FileName', 'NAME', 'Name_sci', 'SPCODE', 'VPCode']
 while True:
@@ -66,9 +67,29 @@ while True:
                 else:
                     outGDB = outFolderCompGDB + os.sep + 'NL48_' + FileType + 'SpGroup_Composite.gdb'
                     regiontype = "_NL48_"
+                    islands = False
                     grouptail = "Regions"
                     break
 
+Region_cross = {'AK': 'AK',
+                'AS': 'AS',
+                'CNMI': 'CNMI',
+                'GU': 'GU',
+                'HI': 'HI',
+                'Howland': 'Howland_Baker_Jarvis',
+                'Johnston': 'Johnston',
+                'L48': 'L48',
+                'Lower48': 'L48',
+                'PLower48': 'L48',
+                'Laysan': 'Laysan',
+                'Mona': 'Mona',
+                'Necker': 'Necker',
+                'Nihoa': 'Nihoa',
+                'NorthwesternHI': 'NorthwesternHI',
+                'PR': 'PR',
+                'Palmyra': 'Palmyra_Kingman',
+                'VI': 'VI',
+                'Wake': 'Wake'}
 arcpy.env.overwriteOutput = True  # ## Change this to False if you don't want GDB to be overwritten
 arcpy.env.scratchWorkspace = ""
 boolbreak = False
@@ -91,7 +112,8 @@ def CreateDirectory(path_dir, outLocationCSV, OutFolderGDB):
         print "created directory {0}".format(OutFolderGDB)
 
 
-def createcomp(group, regionname, regiontype, regionsgdb, date, filetype, projection, outGDB):
+def createcomp(group, regionname, regiontype, regionsgdb, date, filetype, projection, outGDB, Region_cross):
+
     Comp_FileName = regionname + filetype + group + regiontype + projection + "_" + str(date)
     filepath = outGDB + os.sep + Comp_FileName
     if arcpy.Exists(filepath):
@@ -104,10 +126,13 @@ def createcomp(group, regionname, regiontype, regionsgdb, date, filetype, projec
     if regionname == 'Lower48':
         wildcard = str("L48_" + FileType) + "*"
     else:
-        wildcard = str(regionname + "_" + FileType) + "*"
+        region = Region_cross[regionname]
+        wildcard = str(region + "_" + FileType) + "*"
+        print wildcard
     fcList = arcpy.ListFeatureClasses(wildcard, FeatureType)
 
     if len(fcList) == 0:
+
         pass
     elif len(fcList) == count:
         print "  \n  Working on group {0}...".format(group)
@@ -174,6 +199,7 @@ with open(gdbRegions_dict, 'rU') as inputFile2:
         projection = projection.strip('.gdb')
         regionsplit = gdb.split("_")
         regionname = regionsplit[0]
+
         if L48:
             if regionname != "Lower48":
                 continue
@@ -185,6 +211,7 @@ with open(gdbRegions_dict, 'rU') as inputFile2:
             if regionname == "Lower48":
                 continue
             print '\nWorking on Region {0},  {1}...'.format(regionname, projection)
+
         for group in alpha_group:
             if boolbreak:
                 break
@@ -199,10 +226,12 @@ with open(gdbRegions_dict, 'rU') as inputFile2:
             elif group == 'Flowering Plants':
                 group = 'Plants'
             regionsgdb = groupfolder + os.sep + gdb
+
             if not arcpy.Exists(regionsgdb):
                 continue
 
-            boolbreak = createcomp(group, regionname, regiontype, regionsgdb, date, filetype, projection, outGDB)
+            boolbreak = createcomp(group, regionname, regiontype, regionsgdb, date, filetype, projection, outGDB,
+                                   Region_cross)
 
 if boolbreak:
     print 'Check for missing file for previous output'

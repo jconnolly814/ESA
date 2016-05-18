@@ -5,15 +5,14 @@ import arcpy
 
 
 
+
 # TODO make updated for append so that the len list is equal to the len count of rows of comp
 
-refFC = 'J:\Workspace\ESA_Species\ForCoOccur\Composites\GDB\April_16Composites\WebApp\L48_CH_SpGroup_Composite_Web.gdb\Lower48_CH_Amphibians_L48_AlbersEqualArea_20160503_NAD83_WGS84_WebMercator'
+refFC = 'J:\Workspace\ESA_Species\ForCoOccur\Composites\GDB\April_16Composites\WebApp\Composites\L48_CH_SpGroup_Composite_Web.gdb\Lower48_CH_Amphibians_L48_AlbersEqualArea_20160503_NAD83_WGS84_WebMercator'
 
-outFolderCompGDB = r'J:\Workspace\ESA_Species\ForCoOccur\Composites\GDB\April_16Composites\WebApp'
+outFolderCompGDB = r'J:\Workspace\ESA_Species\ForCoOccur\Composites\CurrentComps\WebApp'
 skipgroup = []
-date = '20160503'
 
-compfield = ['EntityID', 'FileName', 'NAME', 'Name_sci', 'SPCODE', 'VPCode']
 while True:
     user_input = raw_input('Are you running range files Yes or No? ')
     if user_input not in ['Yes', 'No']:
@@ -21,9 +20,9 @@ while True:
     else:
         if user_input == 'Yes':
             FilesGDB = [
-                'J:\Workspace\ESA_Species\ForCoOccur\Composites\GDB\April_16Composites\WebApp\NL48_R_SpGroup_Composite_Web.gdb',
-                'J:\Workspace\ESA_Species\ForCoOccur\Composites\GDB\April_16Composites\WebApp\L48_R_SpGroup_Composite_Web.gdb',
-                'J:\Workspace\ESA_Species\ForCoOccur\Composites\GDB\April_16Composites\WebApp\MinorIsland_R_SpGroup_Composite.gdb']
+                'J:\Workspace\ESA_Species\ForCoOccur\Composites\CurrentComps\NL48_R_SpGroup_Composite.gdb',
+                'J:\Workspace\ESA_Species\ForCoOccur\Composites\CurrentComps\L48_R_SpGroup_Composite.gdb',
+                'J:\Workspace\ESA_Species\ForCoOccur\Composites\CurrentComps\MinorIsland_R_SpGroup_Composite.gdb']
             RangeFile = True
             FileType = "R_"
             outGDB = outFolderCompGDB + os.sep + 'R_WebApp_Composite.gdb'
@@ -31,9 +30,9 @@ while True:
         else:
 
             FilesGDB = [
-                'J:\Workspace\ESA_Species\ForCoOccur\Composites\GDB\April_16Composites\WebApp\L48_CH_SpGroup_Composite_Web.gdb',
-                'J:\Workspace\ESA_Species\ForCoOccur\Composites\GDB\April_16Composites\WebApp\NL48_CH_SpGroup_Composite_Web.gdb',
-                'J:\Workspace\ESA_Species\ForCoOccur\Composites\GDB\April_16Composites\WebApp\MinorIsland_CH_SpGroup_Composite.gdb']
+                'J:\Workspace\ESA_Species\ForCoOccur\Composites\CurrentComps\L48_CH_SpGroup_Composite.gdb',
+                'J:\Workspace\ESA_Species\ForCoOccur\Composites\CurrentComps\MinorIsland_CH_SpGroup_Composite.gdb',
+                'J:\Workspace\ESA_Species\ForCoOccur\Composites\CurrentComps\NL48_CH_SpGroup_Composite.gdb']
             RangeFile = False
             FileType = "CH_"
             outGDB = outFolderCompGDB + os.sep + 'CH_WebApp_Composite.gdb'
@@ -58,7 +57,8 @@ def createdirectory(path_dir, outfoldergdb):
         print "created directory {0}".format(outfoldergdb)
 
 
-def createcomp(filetype, spgroup, indate, infiles, outlocation, reffc):
+def createcomp(filetype, spgroup, infiles, outlocation, reffc, datedict):
+    indate = datedict[spgroup]
     comp_filename = filetype + spgroup + "_" + "WebApp_" + str(indate)
     filepath = outlocation + os.sep + comp_filename
     if arcpy.Exists(filepath):
@@ -78,6 +78,7 @@ def createcomp(filetype, spgroup, indate, infiles, outlocation, reffc):
         print "    Already completed {0}".format(comp_filename)
     else:
         print "  \n  Working on group {0}...".format(spgroup)
+        print "  \n  Updated on {0}...".format(indate)
         print '    Total files are {0}, total rows {1}'.format(len(allfc), totalcount)
         arcpy.env.workspace = outlocation
         arcpy.env.overwriteOutput = True
@@ -109,6 +110,7 @@ grouplist = []
 fulllist = []
 
 for v in FilesGDB:
+    print v
     arcpy.env.workspace = v
     singlelist = arcpy.ListFeatureClasses()
     for fc in singlelist:
@@ -121,19 +123,29 @@ for v in FilesGDB:
 
 print grouplist
 
+datedict = {}
 for value in grouplist:
     currentgroup = []
+    date = 0
     for v in fulllist:
         path, fc = os.path.split(v)
-        group = fc.split("_")
-        group = str(group[2])
-        # print group
+        fcparse = fc.split("_")
+        group = str(fcparse[2])
+
         if group == value:
+            if date != int(fcparse[5]):
+                if date > int(fcparse[5]):
+                    pass
+                else:
+                    date = int(fcparse[5])
             path = v
+            datedict[value] = date
             currentgroup.append(path)
     ingdbs = currentgroup
-    # print ingdbs
-    createcomp(FileType, value, date, ingdbs, outGDB, refFC)
+    print datedict
+    print ingdbs
+
+    createcomp(FileType, value, ingdbs, outGDB, refFC, datedict)
 
 end = datetime.datetime.now()
 print "Elapse time {0}".format(end - start_script)
