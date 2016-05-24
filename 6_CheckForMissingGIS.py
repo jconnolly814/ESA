@@ -9,7 +9,7 @@ masterlist = 'J:\Workspace\MasterLists\April2015Lists\CSV\MasterListESA_April201
 # TODO Clean up Region_cross the region field in att table should not have the _
 
 
-outcsv = r'J:\Workspace\ESA_Species\ForCoOccur\Composites\CurrentComps\WebApp\CH_CheckMissingGIS_20160518.csv'
+outcsv = r'J:\Workspace\ESA_Species\ForCoOccur\Composites\CurrentComps\WebApp\CheckMissingGIS_20160518.csv'
 
 index_dict = {'EntityID': 0,
               'ComName': 1,
@@ -187,6 +187,18 @@ for value in entid_list:
                 append = 'Yes'
             elif GIS == 'nan, GIS' and old == 'nan':
                 append = 'Yes'
+            elif GIS == 'Yes' and old == 'nan':
+                append = 'Yes'
+                del checkvalues[counter]
+                checkvalues.insert(counter, ('nan, GIS'))
+            elif GIS == 'Yes' and old is None:
+                append = 'Yes'
+                del checkvalues[counter]
+                checkvalues.insert(counter, ('nan, GIS'))
+            elif old == 'Yes':
+                del checkvalues[counter]
+                checkvalues.insert(counter, ('Yes, None'))
+                append = 'Error'
             else:
                 del checkvalues[counter]
                 checkvalues.insert(counter, ('Error'))
