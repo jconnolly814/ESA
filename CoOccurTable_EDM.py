@@ -2,9 +2,13 @@ import datetime
 
 import pandas as pd
 
-inlocation = r'C:\Users\JConno02\Desktop\active\AquSpecies\ExportTables\CSV\HUC12_10_Totals.csv'
+##TODO When running for skipperling it extract Corn as the use when it was Pasture
+##TODO for pref hab the column head of zonal table was cause it to not run
+##TODO change intervals so that 0 is alone then it goes to 30 and up by 30
+
+inlocation = r'J:\Workspace\ESA_Species\SpeciesWorkshop\ExportTableZoneHis\ZonalGAP_patch7Shrub.csv'
 masterlist = 'J:\Workspace\MasterLists\April2015Lists\CSV\MasterListESA_April2015_20151015_20151124.csv'
-outcsv = r'C:\Users\JConno02\Desktop\active\AquSpecies\ExportTables\CSV\HUC12_10_outputIntervals2.csv'
+outcsv = r'J:\Workspace\ESA_Species\SpeciesWorkshop\ExportTableZoneHis\ZonalGAP_10147_patch7_outputIntervals.csv'
 colstart = 1
 labelCol = 0
 intveral = 30
@@ -40,9 +44,11 @@ def sum_by_interval(colstart, maxdis, intervalDict, indf, colcount, use):
         intervals = []
         row = 0
         currentdis = 0
+        # entid ='10147'
         entid = listheader[col]
         entid = entid.split('_')
-        entid = str(entid[1])
+        lislen = len(entid)
+        entid = str(entid[lislen - 1])
         print entid
         currentinterval = 0
         while long(currentdis) < long(maxdis):
@@ -57,7 +63,7 @@ def sum_by_interval(colstart, maxdis, intervalDict, indf, colcount, use):
 
                     if currentdis == currentinterval:
                         # print '{0},{1}'.format(row,col)
-                        value = indf.iloc[row, col]
+                        value = int(indf.iloc[row, col])
                         sum_pixel += value
 
                         sp_results = intervalDict.get(entid)
@@ -74,7 +80,8 @@ def sum_by_interval(colstart, maxdis, intervalDict, indf, colcount, use):
 
                     else:
                         # print '{0},{1}'.format(row,col)
-                        value = indf.iloc[row, col]
+                        value = int(indf.iloc[row, col])
+
                         sum_pixel += value
 
                     row += 1
