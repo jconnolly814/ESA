@@ -9,7 +9,8 @@ dissolveFields = ['NAME', 'Name_sci', 'SPCode', 'VIPCode', 'FileName', 'EntityID
 masterlist = 'J:\Workspace\MasterLists\April2015Lists\CSV\MasterListESA_April2015_20151015_20151124.csv'
 gdbRegions_dict = 'J:\Workspace\ESA_Species\ForCoOccur\Dict\gdbRegions_dict.csv'
 
-skipgroup = []
+skipgroup = ['Amphibians', 'Arachnids', 'Birds', 'Clams', 'Conifers and Cycads', 'Corals', 'Ferns and Allies', 'Fishes',
+             'Flowering Plants', 'Insects', 'Lichens', 'Mammals', 'Reptiles', 'Snails']
 skipregions = []
 
 ## TODO check to see if do this  by regions and then group would simplify code

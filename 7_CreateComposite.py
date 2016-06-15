@@ -8,15 +8,17 @@ import arcpy
 
 
 
+
 ## TODO make updated for append so that the len list is equal to the len count of rows of comp
 ##T0DO change script so it asks user which groups need to be updated then it archives the current file for that species group
 masterlist = 'J:\Workspace\MasterLists\April2015Lists\CSV\MasterListESA_April2015_20151015_20151124.csv'
 refFC = 'J:\Workspace\ESA_Species\ForCoOccur\CriticalHabitat\Mammals\Regions\Laysan_WebApp.gdb\Laysan_CH_2891_poly_20150428_NAD83_WGS84_Laysanprj'
 
 gdbRegions_dict = 'J:\Workspace\ESA_Species\ForCoOccur\Dict\gdbRegions_dict.csv'
-outFolderCompGDB = r'J:\Workspace\ESA_Species\ForCoOccur\Composites\GDB\May2016'
-skipgroup = []
-date = '20160616'
+outFolderCompGDB = r'J:\Workspace\ESA_Species\ForCoOccur\Composites\GDB\June2016'
+skipgroup = ['Amphibians', 'Arachnids', 'Birds', 'Clams', 'Conifers and Cycads', 'Corals', 'Ferns and Allies', 'Fishes',
+             'Flowering Plants', 'Insects', 'Lichens', 'Mammals', 'Reptiles', 'Snails']
+date = '20160615'
 
 compfield = ['EntityID', 'FileName', 'NAME', 'Name_sci', 'SPCODE', 'VPCode']
 while True:
