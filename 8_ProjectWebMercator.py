@@ -7,8 +7,8 @@ import arcpy
 
 L48 = False
 FirstRun = False
-ingdb = r'J:\Workspace\ESA_Species\ForCoOccur\Composites\CurrentComps\MinorIsland_R_SpGroup_Composite.gdb'
-outgdb = r'J:\Workspace\ESA_Species\ForCoOccur\Composites\CurrentComps\WebApp\Composites\MinorIsland_R_SpGroup_Composite.gdb'
+ingdb = r'J:\Workspace\ESA_Species\ForCoOccur\Composites\CurrentComps\L48_R_SpGroup_Composite.gdb'
+outgdb = r'J:\Workspace\ESA_Species\ForCoOccur\Composites\CurrentComps\WebApp\Composites\L48_R_SpGroup_Composite_Web.gdb'
 
 proj_Folder = 'J:\Workspace\projections'
 desiredProject = 'J:\Workspace\projections\WGS 1984 Web Mercator (auxiliary sphere).prj'
