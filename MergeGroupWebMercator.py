@@ -7,6 +7,7 @@ import arcpy
 
 
 
+
 # TODO make updated for append so that the len list is equal to the len count of rows of comp
 
 refFC = 'J:\Workspace\ESA_Species\ForCoOccur\Composites\GDB\April_16Composites\WebApp\Composites\L48_CH_SpGroup_Composite_Web.gdb\Lower48_CH_Amphibians_L48_AlbersEqualArea_20160503_NAD83_WGS84_WebMercator'
@@ -21,9 +22,9 @@ while True:
     else:
         if user_input == 'Yes':
             FilesGDB = [
-                'J:\Workspace\ESA_Species\ForCoOccur\Composites\CurrentComps\NL48_R_SpGroup_Composite.gdb',
-                'J:\Workspace\ESA_Species\ForCoOccur\Composites\CurrentComps\L48_R_SpGroup_Composite.gdb',
-                'J:\Workspace\ESA_Species\ForCoOccur\Composites\CurrentComps\MinorIsland_R_SpGroup_Composite.gdb']
+                r'J:\Workspace\ESA_Species\ForCoOccur\Composites\CurrentComps\WebApp\Composites\NL48_R_SpGroup_Composite_Web.gdb',
+                r'J:\Workspace\ESA_Species\ForCoOccur\Composites\CurrentComps\WebApp\Composites\L48_R_SpGroup_Composite_Web.gdb',
+                r'J:\Workspace\ESA_Species\ForCoOccur\Composites\CurrentComps\WebApp\Composites\MinorIsland_R_SpGroup_Composite.gdb']
             RangeFile = True
             FileType = "R_"
             outGDB = outFolderCompGDB + os.sep + 'R_WebApp_Composite.gdb'
@@ -31,9 +32,9 @@ while True:
         else:
 
             FilesGDB = [
-                'J:\Workspace\ESA_Species\ForCoOccur\Composites\CurrentComps\L48_CH_SpGroup_Composite.gdb',
-                'J:\Workspace\ESA_Species\ForCoOccur\Composites\CurrentComps\MinorIsland_CH_SpGroup_Composite.gdb',
-                'J:\Workspace\ESA_Species\ForCoOccur\Composites\CurrentComps\NL48_CH_SpGroup_Composite.gdb']
+                'J:\Workspace\ESA_Species\ForCoOccur\Composites\CurrentComps\WebApp\Composites\L48_CH_SpGroup_Composite_Web.gdb',
+                'J:\Workspace\ESA_Species\ForCoOccur\Composites\CurrentComps\WebApp\Composites\MinorIsland_CH_SpGroup_Composite.gdb',
+                'J:\Workspace\ESA_Species\ForCoOccur\Composites\CurrentComps\WebApp\Composites\NL48_CH_SpGroup_Composite_Web.gdb']
             RangeFile = False
             FileType = "CH_"
             outGDB = outFolderCompGDB + os.sep + 'CH_WebApp_Composite.gdb'
