@@ -1,12 +1,15 @@
 import datetime
 import os
+
 import pandas as pd
 import arcpy
 
 masterlist = 'J:\Workspace\MasterLists\April2015Lists\CSV\MasterListESA_April2015_20151015_20151124.csv'
 # TODO take table and load as a list in script so that there doesn't need to be a standalone document
 
-skiplist = []  # species groups that were already run
+skiplist = ['Amphibians', 'Arachnids', 'Birds', 'Clams', 'Conifers and Cycads', 'Corals', 'Ferns and Allies',
+            'Fishes', 'Flowering Plants', 'Insects', 'Lichens', 'Mammals', 'Reptiles',
+            'Snails']  # species groups that were already run
 
 index_dict = {'EntityID': 0,
               'AK': 5,
@@ -99,11 +102,9 @@ regionaldf = pd.read_excel(regionallocations, sheetname='Sheet1', header=0, skip
                            convert_float=True, has_index_names=None, converters=None, engine=None)
 rowcount = regionaldf.count(axis=0, level=None, numeric_only=False)
 rowindex = rowcount.values[0]
-print rowindex
 
 listheader = regionaldf.columns.values.tolist()
 colcount = len(listheader)
-print colcount
 outDF = pd.DataFrame(columns=listheader)
 
 col = 0
