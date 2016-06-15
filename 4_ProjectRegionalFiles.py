@@ -15,7 +15,8 @@ templocation = r'C:\Workspace\temp\temp1.gdb'
 inprj_dict = 'J:\Workspace\ESA_Species\ForCoOccur\Dict\Reproject_dict_simplfied.csv'
 # TODO incorpoate dict into script so that it does not need to load file separately
 
-skipgroup = []
+skipgroup = ['Amphibians', 'Arachnids', 'Birds', 'Clams', 'Conifers and Cycads', 'Corals', 'Ferns and Allies', 'Fishes',
+             'Flowering Plants', 'Insects', 'Lichens', 'Mammals', 'Reptiles', 'Snails']
 skipregions = []
 
 # TODO had in try except loop that will export completed regions and groups if the script bombs to be used as inputs when restarted
@@ -26,14 +27,12 @@ while True:
     else:
         if user_input == 'Yes':
             inFolder = 'J:\Workspace\ESA_Species\ForCoOccur\Range'
-
             proj_Folder = 'J:\Workspace\projections'
             print 'Running range files output will be located at {0}'.format(inFolder)
             speciestype = 'Range'
             break
         else:
             inFolder = 'J:\Workspace\ESA_Species\ForCoOccur\CriticalHabitat'
-
             proj_Folder = 'J:\Workspace\projections'
             speciestype = 'Critical Habitat'
             print 'Running critical habitat files output will be located at {0}'.format(inFolder)
