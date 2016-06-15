@@ -5,7 +5,7 @@ import arcpy
 import pandas as pd
 
 masterlist = 'J:\Workspace\MasterLists\April2015Lists\CSV\MasterListESA_April2015_20151015_20151124.csv'
-infolder = r'J:\Workspace\ESA_Species\ForCoOccur\Composites\GDB\ArchivedComposites\20160503\WebApp\R_WebApp_Composite.gdb'  # folder of GDB
+infolder = r'J:\Workspace\ESA_Species\ForCoOccur\Composites\CurrentComps\WebApp\CH_WebApp_Composite.gdb'  # folder of GDB
 
 # species groups to skip
 skiplist = []

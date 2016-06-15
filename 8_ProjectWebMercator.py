@@ -5,6 +5,7 @@ import shutil
 
 import arcpy
 
+##TODO intermediate output is saving to the inlocation
 L48 = False
 FirstRun = False
 ingdb = r'J:\Workspace\ESA_Species\ForCoOccur\Composites\CurrentComps\NL48_R_SpGroup_Composite.gdb'
