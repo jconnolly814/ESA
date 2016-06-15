@@ -3,11 +3,12 @@ import datetime
 
 import arcpy
 
-masterlist = 'J:\Workspace\MasterLists\CSV\MasterListESA_April2015_20151015_20151124.csv'
+masterlist = 'J:\Workspace\MasterLists\April2015Lists\CSV\MasterListESA_April2015_20151015_20151124.csv'
 
 PossAnswers = ['Yes', 'No']
-masterlist = 'J:\Workspace\MasterLists\CSV\MasterListESA_April2015_20151015_20151118.csv'
-skip = []  ##species groups that were already run
+
+skip = ['Amphibians', 'Arachnids', 'Birds', 'Clams', 'Conifers and Cycads', 'Corals', 'Ferns and Allies',
+        'Fishes']  ##species groups that were already run
 
 QAanswer = True
 
@@ -27,7 +28,7 @@ while QAanswer:
             outfolder = 'J:\Workspace\ESA_Species\ForCoOccur\CriticalHabitat'
             print 'Running critical habitat files output will be located at {0}'.format(outfolder)
 
-skip = ['Amphibians', 'Arachnids', 'Birds', 'Clams', 'Conifers and Cycads', 'Corals', 'Crustaceans', 'Ferns and Allies', 'Fishes']
+
 
 
 def fcs_in_workspace(workspace):
@@ -143,18 +144,25 @@ for group in alpha_group:
                 total -= 1
                 print "Copied lower48 species {0}  remaining {1} in {2}".format(fc, total, group)
                 arcpy.CopyFeatures_management(infile, outfile)
+            else:
+                total -= 1
+
         elif entid in nonLoweronly_list:
             outfile = nl48_gdb + os.sep + fc
             if not arcpy.Exists(outfile):
                 total -= 1
-                print "Moved {0} to NL48 GDB remaining {1} in {2}".format(fc, total, group)
+                print "Copied {0} to NL48 GDB remaining {1} in {2}".format(fc, total, group)
                 arcpy.MultipartToSinglepart_management(infile, outfile)
+            else:
+                total -= 1
         elif entid in both_list:
             outfile = both_gdb + os.sep + fc
             if not arcpy.Exists(outfile):
                 total -= 1
-                print "Moved {0} to Both GDB {0}remaining {1} in {2}".format(fc, total, group)
+                print "Copied {0} to Both GDB {0}remaining {1} in {2}".format(fc, total, group)
                 arcpy.MultipartToSinglepart_management(infile, outfile)
+            else:
+                total -= 1
     print "Species without a regions {0}".format(noRegion)
     print "Current group is {0}".format(group)
 
