@@ -8,12 +8,14 @@ import arcpy
 
 
 
+
 # TODO make updated for append so that the len list is equal to the len count of rows of comp
 
-refFC = 'J:\Workspace\ESA_Species\ForCoOccur\Composites\GDB\April_16Composites\WebApp\Composites\L48_CH_SpGroup_Composite_Web.gdb\Lower48_CH_Amphibians_L48_AlbersEqualArea_20160503_NAD83_WGS84_WebMercator'
+refFC = r'J:\Workspace\ESA_Species\ForCoOccur\Composites\CurrentComps\ref_FC.gdb\Lower48_CH_Amphibians_L48_AlbersEqualArea_20160503_NAD83_WGS84_WebMercator'
 
 outFolderCompGDB = r'J:\Workspace\ESA_Species\ForCoOccur\Composites\CurrentComps\WebApp'
-skipgroup = []
+skipgroup = ['Amphibians', 'Arachnids', 'Birds', 'Corals', 'Ferns', 'Fishes', 'Plants', 'Insects', 'Mammals',
+             'Reptiles', 'Snails', 'Clams', 'Conifers', 'Lichens']
 
 while True:
     user_input = raw_input('Are you running range files Yes or No? ')
@@ -120,15 +122,18 @@ for v in FilesGDB:
         group = fc.split("_")
         region = group[0]
         group = str(group[2])
-        regiongroup = region + "_" + group
+        if group in skipgroup:
+            continue
+        else:
+            regiongroup = region + "_" + group
 
-        if group not in grouplist:
-            grouplist.append(group)
-        if regiongroup not in regionlist:
-            path = v + os.sep + fc
+            if group not in grouplist:
+                grouplist.append(group)
+            if regiongroup not in regionlist:
+                path = v + os.sep + fc
 
-            fulllist.append(path)
-            regionlist.append(regiongroup)
+                fulllist.append(path)
+                regionlist.append(regiongroup)
 
 print grouplist
 
@@ -152,7 +157,7 @@ for value in grouplist:
             currentgroup.append(path)
     ingdbs = currentgroup
     print datedict
-    print ingdbs
+    # print ingdbs
 
     createcomp(FileType, value, ingdbs, outGDB, refFC, datedict)
 

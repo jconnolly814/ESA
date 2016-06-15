@@ -99,6 +99,7 @@ for group in alpha_group:
     groupfolder = infolder + os.sep + group + os.sep + "Regions"
     with open(gdbRegions_dict, 'rU') as inputFile2:
         for line in inputFile2:
+
             line = line.split(',')
             gdb = str(line[0])
             gdb = gdb.strip("\n")
@@ -163,9 +164,10 @@ for group in alpha_group:
                 if len(fcList) == len(fcList2):
                     print "All {0} species {2} files Dissolved in {1}".format(group, regionname, speciestype)
                 else:
-                    print "Check for missing {0} dissolved files in {1}, {2}".format(group, regionname, speciestype)
+                    print "\nCheck for missing {0} dissolved files in {1}, {2}".format(group, regionname, speciestype)
                     checkbool = True
                     break
+
     inputFile2.close()
 
 end = datetime.datetime.now()

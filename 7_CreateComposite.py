@@ -6,9 +6,6 @@ import arcpy
 
 
 
-
-
-
 ## TODO make updated for append so that the len list is equal to the len count of rows of comp
 ##T0DO change script so it asks user which groups need to be updated then it archives the current file for that species group
 masterlist = 'J:\Workspace\MasterLists\April2015Lists\CSV\MasterListESA_April2015_20151015_20151124.csv'
