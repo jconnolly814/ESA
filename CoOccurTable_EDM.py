@@ -1,20 +1,25 @@
 import datetime
+import os
 
 import pandas as pd
 
-##TODO When running for skipperling it extract Corn as the use when it was Pasture
-##TODO for pref hab the column head of zonal table was cause it to not run
-##TODO change intervals so that 0 is alone then it goes to 30 and up by 30
 
-inlocation = r'J:\Workspace\ESA_Species\SpeciesWorkshop\ExportTableZoneHis\ZonalGAP_patch7Shrub.csv'
-masterlist = 'J:\Workspace\MasterLists\April2015Lists\CSV\MasterListESA_April2015_20151015_20151124.csv'
-outcsv = r'J:\Workspace\ESA_Species\SpeciesWorkshop\ExportTableZoneHis\ZonalGAP_10147_patch7_outputIntervals.csv'
+# TODO When running for skipperling it extract Corn as the use when it was Pasture
+# TODO for pref hab the column head of zonal table was cause it to not run
+# TODO change intervals so that 0 is alone then it goes to 30 and up by 30
+# TODO export table that is just 0 ground and aerial drift
+
+infolder = 'C:\Workspace\ESA_Species\FinalBE_ForCoOccur\Results_Clipped\Range\PracticeCSV2'
+# inlocation = r'J:\Workspace\ESA_Species\SpeciesWorkshop\ExportTableZoneHis\ZonalGAP_patch7Shrub.csv'
+masterlist = 'C:\Users\JConno02\Documents\Projects\ESA\MasterLists\MasterListESA_June2016_20160628.csv'
+outcsv = r'C:\\Workspace\\ESA_Species\\FinalBE_ForCoOccur\\Results_Clipped\\Range\\PracticeCSV2\\PracticeOverlap3.csv'
 colstart = 1
 labelCol = 0
 intveral = 30
 maxdis = 1500
+useindex = 2  # place to extract use from tablename
 
-completedUses = ['10']
+completedUses = []
 useLookup = {'10': 'Corn',
              '20': 'Cotton',
              '30': 'Rice',
@@ -30,9 +35,9 @@ useLookup = {'10': 'Corn',
 
 colincluded = {'EntityID': 0,
                'Group': 1,
-               'ComName': 7,
-               'SciName': 8,
-               'Status_text': 11}
+               'ComName': 2,
+               'SciName': 3,
+               'Status_text': 4}
 
 
 def sum_by_interval(colstart, maxdis, intervalDict, indf, colcount, use):
@@ -40,43 +45,39 @@ def sum_by_interval(colstart, maxdis, intervalDict, indf, colcount, use):
     rowcount = indf.count(axis=0, level=None, numeric_only=False)
     rowindex = rowcount.values[0]
     while col <= (colcount - 1):
-        sum_pixel = 0
         intervals = []
         row = 0
         currentdis = 0
-        # entid ='10147'
         entid = listheader[col]
-        entid = entid.split('_')
+        ent_listID = entid.split('_')
         lislen = len(entid)
-        entid = str(entid[lislen - 1])
-        print entid
+        ent_listID = str(entid[lislen - 1])
         currentinterval = 0
         while long(currentdis) < long(maxdis):
             while row <= (rowindex - 1):
-                currentinterval += intveral
+
                 if currentinterval > maxdis:
                     currentinterval = maxdis
                 intervals.append(str(currentinterval) + '_' + str(use))
+                print currentinterval
                 # print "Working on species {0} at interval {1}".format(entid,currentinterval)
                 sum_pixel = 0
                 while long(currentdis) <= long(currentinterval):
-
                     if currentdis == currentinterval:
                         # print '{0},{1}'.format(row,col)
-                        value = int(indf.iloc[row, col])
+                        value = indf.iloc[row, col].astype(float)
+
                         sum_pixel += value
 
-                        sp_results = intervalDict.get(entid)
+                        sp_results = intervalDict.get(ent_listID)
 
                         if sp_results is None:
-                            intervalDict[entid] = [str(currentinterval) + "_" + str(sum_pixel)]
+                            intervalDict[ent_listID] = [str(currentinterval) + "_" + str(sum_pixel)]
 
                         else:
                             sp_results.append(str(currentinterval) + "_" + str(sum_pixel))
-
-
                             # print value
-                            # print "Total Pixels for species {0} at interval {1} was {2}".format(entid,currentinterval,sum_pixel)
+                            #print "Total Pixels for species {0} at interval {1} was {2}".format(entid,currentinterval,sum_pixel)
 
                     else:
                         # print '{0},{1}'.format(row,col)
@@ -90,6 +91,7 @@ def sum_by_interval(colstart, maxdis, intervalDict, indf, colcount, use):
                     else:
 
                         currentdis = indf.iloc[(row), labelCol]
+                currentinterval += intveral
 
         col += 1
     return intervalDict, intervals
@@ -141,6 +143,10 @@ def extract_speciesinfo(masterlist, colincluded):
     return speciesinfo, listKeys
 
 
+## add two more functions and pull script into functions
+
+
+
 start_script = datetime.datetime.now()
 print "Script started at {0}".format(start_script)
 outheader = []
@@ -149,48 +155,64 @@ speciesinfoDict, spheader = extract_speciesinfo(masterlist, colincluded)
 
 intervalDict = {}
 
+listfolder = os.listdir(infolder)
+for folder in listfolder:
+    try:
+        listtable = os.listdir(infolder + os.sep + folder)
+        for table in listtable:
+            use = table.split("_")
+            use = use[useindex]
+            # usevalue =use[:-2]
+            usevalue = use.replace('x2', '')
+            use_group = useLookup[usevalue]
+            print use_group
+            useResultdf = pd.read_csv(infolder + os.sep + folder + os.sep + table)
+            useResultdf['LABEL'] = useResultdf['LABEL'].map(lambda x: x.replace(',', '')).astype(long)
+            listheader = useResultdf.columns.values.tolist()
+            colcount = len(listheader)
+            intervalDict, intervals = sum_by_interval(colstart, maxdis, intervalDict, useResultdf, colcount, use_group)
+            #print intervals
+            # print intervalDict
+            outheader.extend(spheader)
+            outheader.extend(intervals)
+            print outheader
+    except WindowsError:
+        continue
 
-## add loop to loop through use tables
-## loop start
-usevalue = '10'  # extract from table name
-use = useLookup[usevalue]
-useResultdf = pd.read_csv(inlocation)
-# print useResultdf
-listheader = useResultdf.columns.values.tolist()
-colcount = len(listheader)
-
-intervalDict, intervals = sum_by_interval(colstart, maxdis, intervalDict, useResultdf, colcount, use)
-print intervals
-# print intervalDict
-outheader.extend(spheader)
-outheader.extend(intervals)
-print outheader
-
-
-##loop end
-listentid = intervalDict.keys()
+ent_listID =intervalDict.keys()
+listentid ='' # NEED to extract list from the UNIONed filees
 outlist = []
 for value in listentid:
     currentspecies = []
-    spinfo = speciesinfoDict[str(value)]
+    try:
+        spinfo = speciesinfoDict[str(value)]
+    except KeyError:
+        print value
+        continue
     for v in spinfo:
-        currentspecies.append(str(v))
+        try:
+            currentspecies.append(str(v))
+        except KeyError:
+            print v
+            continue
     spintervals = intervalDict[str(value)]
     for i in spintervals:
-        print i
+        #print i
         breaklist = i.split('_')
         count = str(breaklist[1])
-        interval = str(breaklist[0] + '_' + str(use))
-        print interval
+        interval = str(breaklist[0] + '_' + str(use_group))
+        #print interval
         if interval not in intervals:
             count = 0
         currentspecies.append(count)
+    #print currentspecies
     outlist.append(currentspecies)
     print currentspecies
 print outlist
 
 print intervals
-outDF = pd.DataFrame(outlist, columns=outheader)
+# outDF = pd.DataFrame(outlist, columns= outheader )
+outDF = pd.DataFrame(outlist)
 end = datetime.datetime.now()
 print "Elapse time {0}".format(end - start_script)
 
