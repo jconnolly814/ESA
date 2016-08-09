@@ -1,8 +1,10 @@
 import datetime
 import os
+import arcpy
 
 import pandas as pd
 
+## TODO Make this specific ot step 3 and summing the prefered hab
 
 # TODO When running for skipperling it extract Corn as the use when it was Pasture
 # TODO for pref hab the column head of zonal table was cause it to not run
@@ -10,15 +12,18 @@ import pandas as pd
 # TODO export table that is just 0 ground and aerial drift
 
 infolder = 'C:\Workspace\ESA_Species\FinalBE_ForCoOccur\Results_Clipped\Range\PracticeCSV2'
+
+unioned_gdb ='C:\WorkSpace\ESA_Species\FinalBE_ForCoOccur\Projected_UnionRange_20160705.gdb\Amphibians_Union_Final_20160705_AlbersEqualArea'
+unioned_fields =['OBJECTID','ZoneSpecies']
 # inlocation = r'J:\Workspace\ESA_Species\SpeciesWorkshop\ExportTableZoneHis\ZonalGAP_patch7Shrub.csv'
 masterlist = 'C:\Users\JConno02\Documents\Projects\ESA\MasterLists\MasterListESA_June2016_20160628.csv'
-outcsv = r'C:\\Workspace\\ESA_Species\\FinalBE_ForCoOccur\\Results_Clipped\\Range\\PracticeCSV2\\PracticeOverlap3.csv'
+outcsv = r'C:\\Workspace\\ESA_Species\\FinalBE_ForCoOccur\\Results_Clipped\\Range\\PracticeCSV2\\PracticeOverlap5.csv'
 colstart = 1
 labelCol = 0
 intveral = 30
 maxdis = 1500
 useindex = 2  # place to extract use from tablename
-
+groupindex =4
 completedUses = []
 useLookup = {'10': 'Corn',
              '20': 'Cotton',
@@ -113,7 +118,6 @@ def ask_user_entityid(colincluded):
             if 'EntityID' in colincluded: del colincluded['EntityID']
     return colincluded, user_input
 
-
 def extract_speciesinfo(masterlist, colincluded):
     speciesinfo = {}
     if colincluded['EntityID'] == 0:
@@ -142,9 +146,78 @@ def extract_speciesinfo(masterlist, colincluded):
     inputFile.close()
     return speciesinfo, listKeys
 
+def loop_outtables(infolder,intervalDict,current_group):
+    listfolder = os.listdir(infolder)
+    for folder in listfolder:
+        try:
+            listtable = os.listdir(infolder + os.sep + folder)
+            for table in listtable:
+                parse_fc = table.split("_")
+                group =parse_fc [groupindex]
+                if group == current_group:
+                    use = parse_fc [useindex]
+                    # usevalue =use[:-2]
+                    usevalue = use.replace('x2', '')
+                    use_group = useLookup[usevalue]
+                    print use_group
+                    useResultdf = pd.read_csv(infolder + os.sep + folder + os.sep + table)
+                    useResultdf['LABEL'] = useResultdf['LABEL'].map(lambda x: x.replace(',', '')).astype(long)
+                    listheader = useResultdf.columns.values.tolist()
+                    colcount = len(listheader)
+                    intervalDict, intervals = sum_by_interval(colstart, maxdis, intervalDict, useResultdf, colcount, use_group)
+                    outheader.extend(spheader)
+                    outheader.extend(intervals)
+                    print outheader
+                else:
+                    continue
+        except WindowsError:
+            continue
+    del listfolder
+    print intervals
+    return intervalDict, intervals, outheader
 
-## add two more functions and pull script into functions
+def add_species_info_overlap(id_dict,speciesinfoDict,intervalDict, outlist):
+    id_keys =id_dict.keys()
+    for t in id_keys:
+        listentid = id_dict[t]
+        for value in listentid:
+            currentspecies = []
+            try:
+                spinfo = speciesinfoDict[str(value)]
+            except KeyError:
+                print value
+                continue
+            for v in spinfo:
+                try:
+                    currentspecies.append(str(v))
+                except KeyError:
+                    print v
+                    continue
+            spintervals = intervalDict[str(value)]
+            print spintervals
+            for i in spintervals:
+                breaklist = i.split('_')
+                count = str(breaklist[1])
+                interval = str(breaklist[0] + '_' + str(use_group))
+                #print interval
+                if interval not in intervals:
+                    count = 0
+                currentspecies.append(count)
+            #print currentspecies
+            outlist.append(currentspecies)
+            print currentspecies
+    return outlist
 
+def extract_unionIDfromshapes(unioned_gdb,fc,unioned_fields):
+        unioned_entlist={}
+        infc = unioned_gdb+os.sep+fc
+        with arcpy.da.SearchCursor(infc, unioned_fields) as cursor:
+            for row in cursor:
+                row_id = row[0]
+                entlist = row[1]
+                unioned_entlist[row_id] = entlist
+            del row, cursor
+        return unioned_entlist
 
 
 start_script = datetime.datetime.now()
@@ -154,63 +227,22 @@ outheader = []
 speciesinfoDict, spheader = extract_speciesinfo(masterlist, colincluded)
 
 intervalDict = {}
-
-listfolder = os.listdir(infolder)
-for folder in listfolder:
-    try:
-        listtable = os.listdir(infolder + os.sep + folder)
-        for table in listtable:
-            use = table.split("_")
-            use = use[useindex]
-            # usevalue =use[:-2]
-            usevalue = use.replace('x2', '')
-            use_group = useLookup[usevalue]
-            print use_group
-            useResultdf = pd.read_csv(infolder + os.sep + folder + os.sep + table)
-            useResultdf['LABEL'] = useResultdf['LABEL'].map(lambda x: x.replace(',', '')).astype(long)
-            listheader = useResultdf.columns.values.tolist()
-            colcount = len(listheader)
-            intervalDict, intervals = sum_by_interval(colstart, maxdis, intervalDict, useResultdf, colcount, use_group)
-            #print intervals
-            # print intervalDict
-            outheader.extend(spheader)
-            outheader.extend(intervals)
-            print outheader
-    except WindowsError:
-        continue
-
-ent_listID =intervalDict.keys()
-listentid ='' # NEED to extract list from the UNIONed filees
 outlist = []
-for value in listentid:
-    currentspecies = []
-    try:
-        spinfo = speciesinfoDict[str(value)]
-    except KeyError:
-        print value
-        continue
-    for v in spinfo:
-        try:
-            currentspecies.append(str(v))
-        except KeyError:
-            print v
-            continue
-    spintervals = intervalDict[str(value)]
-    for i in spintervals:
-        #print i
-        breaklist = i.split('_')
-        count = str(breaklist[1])
-        interval = str(breaklist[0] + '_' + str(use_group))
-        #print interval
-        if interval not in intervals:
-            count = 0
-        currentspecies.append(count)
-    #print currentspecies
-    outlist.append(currentspecies)
-    print currentspecies
+
+arcpy.env.workspace = unioned_gdb
+fclist = arcpy.ListFeatureClasses()
+for fc in fclist:
+    print fc
+    sp_group = fc.split('_')
+    sp_group=str(sp_group[0])
+    print sp_group
+    intervalDict, intervals =loop_outtables(infolder,intervalDict,sp_group)
+    union_id_dict = extract_unionIDfromshapes(unioned_gdb,fc,unioned_fields)
+    outlist= add_species_info_overlap(union_id_dict,speciesinfoDict,intervalDict, outlist)
+del fclist
+
 print outlist
 
-print intervals
 # outDF = pd.DataFrame(outlist, columns= outheader )
 outDF = pd.DataFrame(outlist)
 end = datetime.datetime.now()
